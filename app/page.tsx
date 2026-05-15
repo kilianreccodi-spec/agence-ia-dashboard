@@ -113,7 +113,6 @@ export default function Dashboard() {
               color: view === item.id ? c.text : c.textMuted,
               borderLeft: `2px solid ${view === item.id ? c.accent : 'transparent'}`,
               cursor: 'pointer', border: 'none', outline: 'none',
-              borderLeft: `2px solid ${view === item.id ? c.accent : 'transparent'}`,
               fontWeight: view === item.id ? 500 : 400,
             }}>
               {item.label}
