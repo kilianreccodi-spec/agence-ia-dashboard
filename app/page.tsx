@@ -33,12 +33,19 @@ const tasks = {
   ],
 };
 
-const activity = [
-  { time: "14:22", text: "Alex a trié 8 emails · 2 réponses envoyées · 1 en attente de validation", tag: "Email" },
-  { time: "13:45", text: "Sarah a généré la facture #2026-089 · 3 400 € · client Lambert · en attente de validation", tag: "Admin" },
-  { time: "13:12", text: "Tom a relancé Martin SAS · sans réponse depuis 14 jours · réponse positive reçue", tag: "Commercial" },
-  { time: "12:48", text: "Lucas a détecté 3 nouveautés chez la concurrence · rapport envoyé par email", tag: "Stratégie" },
-  { time: "11:55", text: "Clara a envoyé un suivi post-vente à Sophie Renard · demande d'avis Google incluse", tag: "Relation client" },
+const deptPerf = [
+  { dept: "Commercial", metrics: [["Leads qualifiés", "42"], ["RDV bookés", "14"], ["Deals en cours", "7"]] as [string, string][], progress: 70 },
+  { dept: "SEO Delivery", metrics: [["Audits livrés", "18"], ["Reports mensuels", "12"], ["Positions trackées", "420"]] as [string, string][], progress: 55 },
+  { dept: "Admin", metrics: [["Factures envoyées", "28"], ["Relances", "11"], ["Devis en cours", "9"]] as [string, string][], progress: 85 },
+  { dept: "Relation client", metrics: [["Clients actifs", "24"], ["NPS · 30j", "72"], ["Tickets résolus", "89%"]] as [string, string][], progress: 89 },
+];
+
+const recentActivity = [
+  { time: "14:22", text: "Léa a qualifié un nouveau lead · Michel Bernard · Score 84/100 · RDV proposé jeudi 14h", tag: "Commercial" },
+  { time: "13:45", text: "Marc a envoyé le reporting mensuel à Dupont SA · données S12", tag: "SEO" },
+  { time: "13:12", text: "Sami a terminé l'audit on-page de e-commerce-mode.fr · 27 issues détectées · rapport disponible", tag: "SEO" },
+  { time: "12:48", text: "Tom a relancé 14 leads dormants · 3 réponses positives · 1 RDV proposé", tag: "Commercial" },
+  { time: "11:55", text: "Nina a détecté 6 pertes de positions client Lambert · alerte envoyée · audit planifié", tag: "SEO" },
 ];
 
 export default function Dashboard() {
@@ -93,7 +100,6 @@ export default function Dashboard() {
           <div style={{ fontSize: 10, color: c.textFaint, letterSpacing: "1px", textTransform: "uppercase", padding: "0 8px", marginBottom: 6 }}>Navigation</div>
           {navItems.map((item) => (
             <button key={item.id} onClick={() => setView(item.id)} style={{
-              // ✅ FIX: border: "none" déplacé AVANT borderLeft pour ne pas l'écraser
               ...tr, textAlign: "left", fontSize: 13, padding: "8px 12px", borderRadius: 6,
               background: view === item.id ? c.hover : "transparent",
               color: view === item.id ? c.text : c.textMuted,
@@ -115,47 +121,63 @@ export default function Dashboard() {
 
       <main style={{ flex: 1, overflowY: "auto", padding: 28 }}>
 
+        {/* ─── DASHBOARD ─── */}
         {view === "dashboard" && (
           <div>
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 28 }}>
-              <h1 style={{ fontSize: 18, fontWeight: 600, color: c.text }}>Dashboard — Optima Flow</h1>
-              <div style={{ ...tr, fontSize: 11, color: c.textMuted, background: c.card, border: `1px solid ${c.border}`, padding: "5px 12px", borderRadius: 5, textAlign: "right", lineHeight: 1.7 }}>DONNÉES EN DIRECT<br />Connecté à Supabase</div>
+            {/* Header */}
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 28 }}>
+              <h1 style={{ fontSize: 18, fontWeight: 600, color: c.text }}>Dashboard · Optima Flow</h1>
+              <div style={{ ...tr, fontSize: 11, color: c.textMuted, background: c.card, border: `1px solid ${c.border}`, padding: "5px 12px", borderRadius: 5 }}>
+                Mis à jour il y a 8 secondes
+              </div>
             </div>
 
+            {/* KPI cards */}
             <div style={{ display: "grid", gridTemplateColumns: "repeat(4,1fr)", gap: 10, marginBottom: 24 }}>
               {[
-                { label: "Leads total", value: leads.length.toString(), delta: "Données réelles Supabase", dc: c.green },
-                { label: "Leads qualifiés", value: leads.filter(l => l.statut === "qualifié").length.toString(), delta: "Statut qualifié", dc: c.green },
-                { label: "Score moyen", value: leads.length > 0 ? Math.round(leads.reduce((a, l) => a + (l.score || 0), 0) / leads.length).toString() : "0", delta: "Moyenne des scores", dc: c.accent },
-                { label: "Nouveaux leads", value: leads.filter(l => l.statut === "nouveau").length.toString(), delta: "Statut nouveau", dc: c.green },
+                { label: "TÂCHES AUTOMATISÉES · 7J", value: "247", delta: "↑ 18% vs semaine précédente", dc: c.green },
+                { label: "VALEUR GÉNÉRÉE · 30J", value: "14 300 €", delta: "↑ 2 480 € vs mois précédent", dc: c.green },
+                { label: "VALIDATIONS EN ATTENTE", value: leads.filter(l => l.statut === "en attente").length || "3", delta: "2 depuis + 2h", dc: c.accent },
+                { label: "UPTIME AGENTS · 30J", value: "98.4%", delta: "SLA respecté", dc: c.green },
               ].map((k, i) => (
                 <div key={i} style={{ ...tr, background: c.card, border: `1px solid ${c.border}`, borderRadius: 10, padding: 16 }}>
-                  <div style={{ fontSize: 10, color: c.textFaint, textTransform: "uppercase", letterSpacing: "0.5px", marginBottom: 8 }}>{k.label}</div>
-                  <div style={{ fontSize: 22, fontWeight: 600, color: c.text }}>{k.value}</div>
-                  <div style={{ fontSize: 11, color: k.dc, marginTop: 4 }}>{k.delta}</div>
+                  <div style={{ fontSize: 10, color: c.textFaint, textTransform: "uppercase", letterSpacing: "0.5px", marginBottom: 10 }}>{k.label}</div>
+                  <div style={{ fontSize: 24, fontWeight: 700, color: c.text, marginBottom: 6 }}>{k.value}</div>
+                  <div style={{ fontSize: 11, color: k.dc }}>{k.delta}</div>
                 </div>
               ))}
             </div>
 
+            {/* Performance par département */}
             <div style={{ fontSize: 11, fontWeight: 600, color: c.textMuted, textTransform: "uppercase", letterSpacing: "0.8px", marginBottom: 12 }}>
-              Leads — données réelles {leads.length > 0 ? `(${leads.length})` : "(aucun lead)"}
+              Performance par département
+            </div>
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(4,1fr)", gap: 10, marginBottom: 24 }}>
+              {deptPerf.map((dep) => (
+                <div key={dep.dept} style={{ ...tr, background: c.card, border: `1px solid ${c.border}`, borderRadius: 10, padding: 16 }}>
+                  <div style={{ fontSize: 13, fontWeight: 600, color: c.textSub, marginBottom: 14 }}>{dep.dept}</div>
+                  <div style={{ display: "flex", flexDirection: "column", gap: 7, marginBottom: 14 }}>
+                    {dep.metrics.map(([label, val]) => (
+                      <div key={label} style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                        <span style={{ fontSize: 11, color: c.textMuted }}>{label}</span>
+                        <span style={{ fontSize: 12, fontWeight: 600, color: c.text }}>{val}</span>
+                      </div>
+                    ))}
+                  </div>
+                  <div style={{ height: 3, background: c.border, borderRadius: 2 }}>
+                    <div style={{ width: `${dep.progress}%`, height: "100%", background: c.accent, borderRadius: 2 }} />
+                  </div>
+                </div>
+              ))}
             </div>
 
+            {/* Activité récente */}
+            <div style={{ fontSize: 11, fontWeight: 600, color: c.textMuted, textTransform: "uppercase", letterSpacing: "0.8px", marginBottom: 12 }}>
+              Activité récente
+            </div>
             <div style={{ ...tr, background: c.card, border: `1px solid ${c.border}`, borderRadius: 10, overflow: "hidden" }}>
-              {leads.length > 0 ? leads.map((lead, i) => (
-                <div key={i} style={{ display: "flex", gap: 16, padding: "12px 16px", borderBottom: i < leads.length - 1 ? `1px solid ${c.border}` : "none", alignItems: "flex-start" }}>
-                  <span style={{ fontSize: 12, color: c.textFaint, minWidth: 44, fontWeight: 500 }}>
-                    {new Date(lead.created_at).toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" })}
-                  </span>
-                  <span style={{ fontSize: 12, color: c.textSub, flex: 1, lineHeight: 1.5 }}>
-                    {lead.nom} · {lead.email} · Score {lead.score}
-                  </span>
-                  <span style={{ fontSize: 10, background: c.tagBg, border: `1px solid ${c.border}`, color: c.textMuted, padding: "2px 10px", borderRadius: 4, whiteSpace: "nowrap", fontWeight: 500 }}>
-                    {lead.statut}
-                  </span>
-                </div>
-              )) : activity.map((a, i) => (
-                <div key={i} style={{ display: "flex", gap: 16, padding: "12px 16px", borderBottom: i < activity.length - 1 ? `1px solid ${c.border}` : "none", alignItems: "flex-start" }}>
+              {recentActivity.map((a, i) => (
+                <div key={i} style={{ display: "flex", gap: 16, padding: "12px 16px", borderBottom: i < recentActivity.length - 1 ? `1px solid ${c.border}` : "none", alignItems: "flex-start" }}>
                   <span style={{ fontSize: 12, color: c.textFaint, minWidth: 44, fontWeight: 500 }}>{a.time}</span>
                   <span style={{ fontSize: 12, color: c.textSub, flex: 1, lineHeight: 1.5 }}>{a.text}</span>
                   <span style={{ fontSize: 10, background: c.tagBg, border: `1px solid ${c.border}`, color: c.textMuted, padding: "2px 10px", borderRadius: 4, whiteSpace: "nowrap", fontWeight: 500 }}>{a.tag}</span>
@@ -165,6 +187,7 @@ export default function Dashboard() {
           </div>
         )}
 
+        {/* ─── AGENTS ─── */}
         {view === "agents" && (
           <div>
             <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 28 }}>
@@ -204,6 +227,7 @@ export default function Dashboard() {
           </div>
         )}
 
+        {/* ─── TASKS ─── */}
         {view === "tasks" && (
           <div>
             <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 28 }}>
@@ -237,7 +261,7 @@ export default function Dashboard() {
           </div>
         )}
 
-        {/* ✅ FIX: fragment <> </> pour wrapper les deux divs adjacentes */}
+        {/* ─── ORG ─── */}
         {view === "org" && (
           <>
             <div>
@@ -285,6 +309,7 @@ export default function Dashboard() {
           </>
         )}
 
+        {/* ─── PRICING ─── */}
         {view === "pricing" && (
           <div>
             <div style={{ marginBottom: 32 }}>
