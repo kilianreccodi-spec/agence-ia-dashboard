@@ -3,41 +3,42 @@ import { useState, useEffect } from "react";
 import { supabase } from "../lib/supabase";
 
 const agents = [
-  { id: 1, name: "Alex", role: "Gestion emails", dept: "Communication", tools: ["Gmail", "Outlook"], status: "active", task: "Traite 12 emails en attente" },
-  { id: 2, name: "Léa", role: "Qualification leads", dept: "Commercial", tools: ["HubSpot", "Gmail", "Calendly"], status: "active", task: "Qualifie un nouveau lead" },
-  { id: 3, name: "Marc", role: "Reporting mensuel", dept: "SEO Delivery", tools: ["Search Console", "GA4", "Ahrefs"], status: "active", task: "Génère rapport avril" },
-  { id: 4, name: "Tom", role: "Relance inactifs", dept: "Commercial", tools: ["HubSpot", "LinkedIn", "Gmail"], status: "pending", task: "Attend validation" },
-  { id: 5, name: "Nina", role: "Suivi positions", dept: "SEO Delivery", tools: ["SEMrush", "Notion", "Slack"], status: "active", task: "Scan nocturne en cours" },
+  { id: 1, name: "Alex", role: "Gestion email", dept: "Communication", tools: ["Gmail", "Outlook"], status: "active", task: "Traite 8 emails en attente" },
+  { id: 2, name: "Tom", role: "Relance inactifs", dept: "Commercial", tools: ["HubSpot", "Gmail"], status: "active", task: "Relance 12 leads dormants" },
+  { id: 3, name: "Lucas", role: "Veille concurrentielle", dept: "Stratégie", tools: ["Google", "LinkedIn", "Slack"], status: "active", task: "Scan hebdomadaire en cours" },
+  { id: 4, name: "Clara", role: "Suivi client post-vente", dept: "Relation client", tools: ["Gmail", "HubSpot", "Calendly"], status: "active", task: "Envoie suivi J+7 · 3 clients" },
+  { id: 5, name: "Romain", role: "Recrutement", dept: "RH", tools: ["Gmail", "Notion"], status: "pending", task: "Attend validation · 2 CVs" },
+  { id: 6, name: "Sarah", role: "Facturation automatique", dept: "Admin", tools: ["Gmail", "Notion", "Pennylane"], status: "active", task: "Facture #2026-089 générée" },
 ];
 
 const tasks = {
   ongoing: [
-    { title: "Tri emails entrants · 12 messages", agent: "Alex", time: "il y a 3 min" },
-    { title: "Qualification lead · Michel Bernard", agent: "Léa", time: "il y a 8 min" },
-    { title: "Reporting mensuel · Dupont SA", agent: "Marc", time: "il y a 15 min" },
-    { title: "Scan positions · portefeuille Q2", agent: "Nina", time: "il y a 22 min" },
-    { title: "Relance · 14 leads dormants", agent: "Tom", time: "il y a 35 min" },
+    { title: "Tri emails entrants · 8 messages", agent: "Alex", time: "il y a 2 min" },
+    { title: "Relance · Martin SAS · sans réponse 14j", agent: "Tom", time: "il y a 10 min" },
+    { title: "Scan concurrents · secteur immobilier", agent: "Lucas", time: "il y a 18 min" },
+    { title: "Suivi post-vente · Sophie Renard J+7", agent: "Clara", time: "il y a 25 min" },
+    { title: "Analyse CV · poste commercial", agent: "Romain", time: "il y a 40 min" },
   ],
   validation: [
-    { title: "Réponse email · client Martin SAS", agent: "Alex · attend validation", time: "1h" },
-    { title: "Remise tarif 12% · Lambert Conseil", agent: "Tom · attend Marc", time: "2h" },
-    { title: "Envoi proposition 18 400 € · Aubry", agent: "Léa · attend Marc", time: "4h" },
+    { title: "Réponse email · client Dupont SAS", agent: "Alex · attend validation", time: "1h" },
+    { title: "Facture #2026-089 · 3 400 € · Lambert", agent: "Sarah · attend validation", time: "2h" },
+    { title: "Relance devis · Martin SAS · 8 200 €", agent: "Tom · attend validation", time: "3h" },
   ],
   done: [
-    { title: "Relance pièces manquantes · 8 clients", agent: "Alex", time: "1h12" },
-    { title: "Audit on-page · e-commerce-mode.fr", agent: "Marc", time: "2h30" },
-    { title: "Qualif · Catherine Petit · score 91/100", agent: "Léa", time: "3h44" },
-    { title: "Reporting trimestriel NPS envoyé", agent: "Marc", time: "4h02" },
-    { title: "Facture #2026-247 · 4 200 €", agent: "Admin", time: "5h15" },
+    { title: "Rapport veille · 3 nouveautés concurrents", agent: "Lucas", time: "1h30" },
+    { title: "Facture #2026-088 · 1 800 € · envoyée", agent: "Sarah", time: "2h15" },
+    { title: "Suivi post-vente · Thomas Girard J+30", agent: "Clara", time: "3h00" },
+    { title: "CV scorés · 12 candidats · top 3 identifiés", agent: "Romain", time: "4h20" },
+    { title: "Relance · 8 leads · 2 réponses positives", agent: "Tom", time: "5h10" },
   ],
 };
 
 const activity = [
-  { time: "14:22", text: "Alex a trié 12 emails · 3 réponses envoyées · 2 en attente de validation", tag: "Email" },
-  { time: "13:45", text: "Léa a qualifié Michel Bernard · Score 84/100 · RDV proposé jeudi 14h", tag: "Commercial" },
-  { time: "13:12", text: "Marc a envoyé le reporting mensuel à Dupont SA · données S12", tag: "SEO" },
-  { time: "12:48", text: "Tom a relancé 14 leads dormants · 3 réponses positives · 1 RDV proposé", tag: "Commercial" },
-  { time: "11:55", text: "Nina a détecté 6 pertes de positions client Lambert · alerte envoyée", tag: "SEO" },
+  { time: "14:22", text: "Alex a trié 8 emails · 2 réponses envoyées · 1 en attente de validation", tag: "Email" },
+  { time: "13:45", text: "Sarah a généré la facture #2026-089 · 3 400 € · client Lambert · en attente de validation", tag: "Admin" },
+  { time: "13:12", text: "Tom a relancé Martin SAS · sans réponse depuis 14 jours · réponse positive reçue", tag: "Commercial" },
+  { time: "12:48", text: "Lucas a détecté 3 nouveautés chez la concurrence · rapport envoyé par email", tag: "Stratégie" },
+  { time: "11:55", text: "Clara a envoyé un suivi post-vente à Sophie Renard · demande d'avis Google incluse", tag: "Relation client" },
 ];
 
 export default function Dashboard() {
