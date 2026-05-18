@@ -93,11 +93,13 @@ export default function Dashboard() {
           <div style={{ fontSize: 10, color: c.textFaint, letterSpacing: "1px", textTransform: "uppercase", padding: "0 8px", marginBottom: 6 }}>Navigation</div>
           {navItems.map((item) => (
             <button key={item.id} onClick={() => setView(item.id)} style={{
+              // ✅ FIX: border: "none" déplacé AVANT borderLeft pour ne pas l'écraser
               ...tr, textAlign: "left", fontSize: 13, padding: "8px 12px", borderRadius: 6,
               background: view === item.id ? c.hover : "transparent",
               color: view === item.id ? c.text : c.textMuted,
+              border: "none",
               borderLeft: `2px solid ${view === item.id ? c.accent : "transparent"}`,
-              cursor: "pointer", border: "none", outline: "none",
+              cursor: "pointer", outline: "none",
               fontWeight: view === item.id ? 500 : 400,
             }}>{item.label}</button>
           ))}
@@ -235,39 +237,52 @@ export default function Dashboard() {
           </div>
         )}
 
+        {/* ✅ FIX: fragment <> </> pour wrapper les deux divs adjacentes */}
         {view === "org" && (
-          <div>
-            <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 32 }}>
-              <h1 style={{ fontSize: 18, fontWeight: 600, color: c.text }}>Organigramme agentique</h1>
-              <div style={{ fontSize: 11, color: c.textMuted, background: c.card, border: `1px solid ${c.border}`, padding: "5px 12px", borderRadius: 5 }}>5 agents · 4 départements</div>
-            </div>
-            <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 24 }}>
-              <div style={{ background: c.cardAlt, border: `1px solid ${c.accentBorder}`, padding: "12px 28px", borderRadius: 8, textAlign: "center" }}>
-                <div style={{ fontSize: 10, color: c.textFaint, textTransform: "uppercase", letterSpacing: "0.8px", marginBottom: 4 }}>Pilotage humain</div>
-                <div style={{ fontSize: 14, fontWeight: 600, color: c.accent }}>Kilian · Fondateur</div>
+          <>
+            <div>
+              <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 32 }}>
+                <h1 style={{ fontSize: 18, fontWeight: 600, color: c.text }}>Organigramme agentique</h1>
+                <div style={{ fontSize: 11, color: c.textMuted, background: c.card, border: `1px solid ${c.border}`, padding: "5px 12px", borderRadius: 5 }}>5 agents · 4 départements</div>
               </div>
-              <div style={{ width: 1, height: 24, background: c.border }} />
-              <div style={{ display: "grid", gridTemplateColumns: "repeat(4,1fr)", gap: 12, width: "100%" }}>
-                {[
-                  { name: "Commercial", agents: ["Léa · Qualification", "Tom · Relance"] },
-                  { name: "Email & Comms", agents: ["Alex · Emails"] },
-                  { name: "SEO Delivery", agents: ["Marc · Reporting", "Sami · Audit", "Nina · Positions"] },
-                  { name: "Admin", agents: ["Workflows auto"] },
-                ].map((dep) => (
-                  <div key={dep.name}>
-                    <div style={{ background: c.card, border: `1px solid ${c.border}`, borderRadius: 8, padding: "10px 14px", textAlign: "center", marginBottom: 8 }}>
-                      <div style={{ fontSize: 13, fontWeight: 600, color: c.textSub }}>{dep.name}</div>
-                    </div>
-                    {dep.agents.map((a) => (
-                      <div key={a} style={{ background: c.cardAlt, border: `1px solid ${c.border}`, borderRadius: 6, padding: "7px 12px", textAlign: "center", marginBottom: 5 }}>
-                        <div style={{ fontSize: 12, color: c.textMuted, fontWeight: 500 }}>{a}</div>
+              <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 24 }}>
+                <div style={{ background: c.cardAlt, border: `1px solid ${c.accentBorder}`, padding: "12px 28px", borderRadius: 8, textAlign: "center" }}>
+                  <div style={{ fontSize: 10, color: c.textFaint, textTransform: "uppercase", letterSpacing: "0.8px", marginBottom: 4 }}>Pilotage humain</div>
+                  <div style={{ fontSize: 14, fontWeight: 600, color: c.accent }}>Kilian · Fondateur</div>
+                </div>
+                <div style={{ width: 1, height: 24, background: c.border }} />
+                <div style={{ display: "grid", gridTemplateColumns: "repeat(4,1fr)", gap: 12, width: "100%" }}>
+                  {[
+                    { name: "Commercial", agents: ["Tom · Relance inactifs"] },
+                    { name: "Communication", agents: ["Alex · Gestion email"] },
+                    { name: "Stratégie", agents: ["Lucas · Veille concurrentielle"] },
+                    { name: "Relation client", agents: ["Clara · Suivi post-vente"] },
+                    { name: "RH", agents: ["Romain · Recrutement"] },
+                    { name: "Admin", agents: ["Sarah · Facturation"] },
+                  ].map((dep) => (
+                    <div key={dep.name}>
+                      <div style={{ background: c.card, border: `1px solid ${c.border}`, borderRadius: 8, padding: "10px 14px", textAlign: "center", marginBottom: 8 }}>
+                        <div style={{ fontSize: 13, fontWeight: 600, color: c.textSub }}>{dep.name}</div>
                       </div>
-                    ))}
-                  </div>
-                ))}
+                      {dep.agents.map((a) => (
+                        <div key={a} style={{ background: c.cardAlt, border: `1px solid ${c.border}`, borderRadius: 6, padding: "7px 12px", textAlign: "center", marginBottom: 5 }}>
+                          <div style={{ fontSize: 12, color: c.textMuted, fontWeight: 500 }}>{a}</div>
+                        </div>
+                      ))}
+                    </div>
+                  ))}
+                </div>
               </div>
             </div>
-          </div>
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: 40, marginTop: 24, width: "100%" }}>
+              {([["6", "Agents déployés"], ["6", "Départements couverts"], ["145 000 €", "Économies estimées / an"]] as [string, string][]).map(([v, l]) => (
+                <div key={l} style={{ textAlign: "center" }}>
+                  <div style={{ fontSize: 28, fontWeight: 700, color: c.accent }}>{v}</div>
+                  <div style={{ fontSize: 10, color: c.textMuted, textTransform: "uppercase", letterSpacing: "0.8px", marginTop: 6, fontWeight: 500 }}>{l}</div>
+                </div>
+              ))}
+            </div>
+          </>
         )}
 
         {view === "pricing" && (
