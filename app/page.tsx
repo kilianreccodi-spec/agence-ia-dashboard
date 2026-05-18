@@ -243,7 +243,7 @@ export default function Dashboard() {
             <div>
               <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 32 }}>
                 <h1 style={{ fontSize: 18, fontWeight: 600, color: c.text }}>Organigramme agentique</h1>
-                <div style={{ fontSize: 11, color: c.textMuted, background: c.card, border: `1px solid ${c.border}`, padding: "5px 12px", borderRadius: 5 }}>5 agents · 4 départements</div>
+                <div style={{ fontSize: 11, color: c.textMuted, background: c.card, border: `1px solid ${c.border}`, padding: "5px 12px", borderRadius: 5 }}>6 agents · 6 départements</div>
               </div>
               <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 24 }}>
                 <div style={{ background: c.cardAlt, border: `1px solid ${c.accentBorder}`, padding: "12px 28px", borderRadius: 8, textAlign: "center" }}>
