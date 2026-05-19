@@ -309,35 +309,54 @@ export default function Dashboard() {
           </>
         )}
 
-        {/* ─── PRICING ─── */}
-        {view === "pricing" && (
-          <div>
-            <div style={{ marginBottom: 32 }}>
-              <h1 style={{ fontSize: 18, fontWeight: 600, color: c.text }}>L&apos;offre en 3 leviers</h1>
-            </div>
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: 18 }}>
-              {[
-                { num: "01", name: "Le setup", desc: "L'infrastructure initiale. Audit, architecture agentique, premiers agents déployés.", price: "3 000 € à +10 000 €", features: ["Audit de l'entreprise", "Architecture des agents", "Intégration outils existants", "Formation équipe", "Dashboard de pilotage"], featured: false },
-                { num: "02", name: "Le mensuel", desc: "Tu restes en CAIO externe. Tu testes, améliores, implémentes chaque mois.", price: "500 € à 2 000 €/mois", features: ["Suivi performance agents", "Nouveaux agents chaque mois", "Optimisation continue", "Reporting mensuel client", "Support prioritaire"], featured: true },
-                { num: "03", name: "La perf.", desc: "Prime sur résultats. L'IA déclenche du CA mesurable.", price: "5 à 15% du CA généré", features: ["Tracking CA précis", "Agents commerciaux dédiés", "Zéro risque client", "Alignement total d'intérêts", "Reporting CA temps réel"], featured: false },
-              ].map((plan) => (
-                <div key={plan.num} style={{ background: plan.featured ? c.cardAlt : c.card, border: `1px solid ${plan.featured ? c.accentBorder : c.border}`, borderRadius: 12, padding: 28 }}>
-                  <div style={{ fontSize: 10, color: c.textFaint, textTransform: "uppercase", letterSpacing: "1px", marginBottom: 8, fontWeight: 600 }}>{plan.num}</div>
-                  <div style={{ fontSize: 18, fontWeight: 600, color: c.accent, marginBottom: 10 }}>{plan.name}</div>
-                  <div style={{ fontSize: 12, color: c.textMuted, marginBottom: 20, lineHeight: 1.7 }}>{plan.desc}</div>
-                  <div style={{ fontSize: 16, fontWeight: 600, color: c.text, marginBottom: 20, paddingBottom: 20, borderBottom: `1px solid ${c.border}` }}>{plan.price}</div>
-                  <ul style={{ listStyle: "none", display: "flex", flexDirection: "column", gap: 10 }}>
-                    {plan.features.map((f) => (
-                      <li key={f} style={{ display: "flex", alignItems: "center", gap: 10, fontSize: 12, color: c.textSub }}>
-                        <span style={{ color: c.green, fontWeight: 700, fontSize: 14 }}>✓</span>{f}
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              ))}
-            </div>
+  {/* ─── PRICING ─── */}
+{view === "pricing" && (
+  <div>
+    <div style={{ marginBottom: 32 }}>
+      <h1 style={{ fontSize: 18, fontWeight: 600, color: c.text }}>L&apos;offre en 3 niveaux</h1>
+    </div>
+
+    <div style={{ display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: 18, marginBottom: 32 }}>
+      {[
+        { num: "01", name: "Starter", desc: "Un premier agent déployé, prêt à fonctionner en une semaine.", price: "1 500 €", detail: "one-shot", features: ["Setup complet", "1 agent au choix", "Dashboard de pilotage", "Formation équipe (1h30)"], featured: false },
+        { num: "02", name: "Avancé", desc: "Trois agents pour couvrir les départements clés de ton activité.", price: "3 500 €", detail: "one-shot", features: ["Setup complet", "3 agents au choix", "Dashboard de pilotage", "Formation équipe (1h30)", "Intégration outils existants"], featured: true },
+        { num: "03", name: "Sur mesure", desc: "Cinq agents construits autour de tes process, avec un dashboard personnalisé à tes KPIs.", price: "6 000 €", detail: "one-shot", features: ["Setup complet", "5 agents sur mesure", "Dashboard personnalisé", "Formation équipe (1h30)", "Intégration avancée", "Support prioritaire 24h"], featured: false },
+      ].map((plan) => (
+        <div key={plan.num} style={{ background: plan.featured ? c.cardAlt : c.card, border: `1px solid ${plan.featured ? c.accentBorder : c.border}`, borderRadius: 12, padding: 28 }}>
+          <div style={{ fontSize: 10, color: c.textFaint, textTransform: "uppercase", letterSpacing: "1px", marginBottom: 8, fontWeight: 600 }}>{plan.num}</div>
+          <div style={{ fontSize: 18, fontWeight: 600, color: c.accent, marginBottom: 10 }}>{plan.name}</div>
+          <div style={{ fontSize: 12, color: c.textMuted, marginBottom: 20, lineHeight: 1.7 }}>{plan.desc}</div>
+          <div style={{ marginBottom: 20, paddingBottom: 20, borderBottom: `1px solid ${c.border}` }}>
+            <span style={{ fontSize: 22, fontWeight: 700, color: c.text }}>{plan.price}</span>
           </div>
-        )}
+          <ul style={{ listStyle: "none", display: "flex", flexDirection: "column", gap: 10 }}>
+            {plan.features.map((f) => (
+              <li key={f} style={{ display: "flex", alignItems: "center", gap: 10, fontSize: 12, color: c.textSub }}>
+                <span style={{ color: c.green, fontWeight: 700, fontSize: 14 }}>✓</span>{f}
+              </li>
+            ))}
+          </ul>
+        </div>
+      ))}
+    </div>
+
+    <div style={{ fontSize: 11, fontWeight: 600, color: c.textMuted, textTransform: "uppercase", letterSpacing: "0.8px", marginBottom: 14 }}>Suppléments</div>
+    <div style={{ display: "grid", gridTemplateColumns: "repeat(4,1fr)", gap: 12 }}>
+      {[
+        { nom: "Nouvel agent", prix: "750 €", detail: "par agent" },
+        { nom: "Formation équipe", prix: "300 €", detail: "1h30" },
+        { nom: "Maintenance", prix: "150 €", detail: "/ mois / agent" },
+        { nom: "Reporting mensuel", prix: "200 €", detail: "/ mois" },
+      ].map((s) => (
+        <div key={s.nom} style={{ background: c.card, border: `1px solid ${c.border}`, borderRadius: 10, padding: 18 }}>
+          <div style={{ fontSize: 11, color: c.textFaint, marginBottom: 6 }}>{s.nom}</div>
+          <div style={{ fontSize: 18, fontWeight: 700, color: c.text }}>{s.prix}</div>
+          <div style={{ fontSize: 11, color: c.textMuted, marginTop: 4 }}>{s.detail}</div>
+        </div>
+      ))}
+    </div>
+  </div>
+)}
 
       </main>
     </div>
