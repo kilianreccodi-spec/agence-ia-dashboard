@@ -48,10 +48,26 @@ const recentActivity = [
   { time: "11:55", text: "Nina a détecté 6 pertes de positions client Lambert · alerte envoyée · audit planifié", tag: "SEO" },
 ];
 
+const navItems = [
+  { id: "dashboard", label: "Dashboard" },
+  { id: "agents", label: "Agents" },
+  { id: "tasks", label: "Tasks" },
+  { id: "org", label: "Org" },
+  { id: "pricing", label: "Offre" },
+];
+
 export default function Dashboard() {
   const [view, setView] = useState("dashboard");
   const [dark, setDark] = useState(true);
   const [leads, setLeads] = useState<any[]>([]);
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const check = () => setIsMobile(window.innerWidth < 768);
+    check();
+    window.addEventListener("resize", check);
+    return () => window.removeEventListener("resize", check);
+  }, []);
 
   useEffect(() => {
     const mq = window.matchMedia("(prefers-color-scheme: dark)");
@@ -81,86 +97,89 @@ export default function Dashboard() {
 
   const tr = { transition: "background 0.2s, color 0.2s, border-color 0.2s" };
 
-  const navItems = [
-    { id: "dashboard", label: "Dashboard" },
-    { id: "agents", label: "Agents" },
-    { id: "tasks", label: "Task Board" },
-    { id: "org", label: "Organigramme" },
-    { id: "pricing", label: "Offre" },
-  ];
-
   return (
-    <div style={{ ...tr, display: "flex", height: "100vh", background: c.bg, color: c.text, overflow: "hidden", fontFamily: "DM Sans, sans-serif" }}>
-      <aside style={{ ...tr, width: 200, background: c.sidebar, borderRight: `1px solid ${c.border}`, display: "flex", flexDirection: "column", flexShrink: 0 }}>
-        <div style={{ padding: "18px 16px", borderBottom: `1px solid ${c.border}` }}>
-          <div style={{ fontSize: 15, fontWeight: 600, color: c.text }}>◆ Optima Flow</div>
-          <div style={{ fontSize: 11, color: c.textFaint, marginTop: 4 }}>platform.optimaflow.ai</div>
-        </div>
-        <nav style={{ padding: "14px 10px", display: "flex", flexDirection: "column", gap: 3, flex: 1 }}>
-          <div style={{ fontSize: 10, color: c.textFaint, letterSpacing: "1px", textTransform: "uppercase", padding: "0 8px", marginBottom: 6 }}>Navigation</div>
-          {navItems.map((item) => (
-            <button key={item.id} onClick={() => setView(item.id)} style={{
-              ...tr, textAlign: "left", fontSize: 13, padding: "8px 12px", borderRadius: 6,
-              background: view === item.id ? c.hover : "transparent",
-              color: view === item.id ? c.text : c.textMuted,
-              border: "none",
-              borderLeft: `2px solid ${view === item.id ? c.accent : "transparent"}`,
-              cursor: "pointer", outline: "none",
-              fontWeight: view === item.id ? 500 : 400,
-            }}>{item.label}</button>
-          ))}
-          <a href="/agent" style={{ ...tr, textAlign: "left", fontSize: 13, padding: "8px 12px", borderRadius: 6, background: "transparent", color: c.textMuted, borderLeft: "2px solid transparent", textDecoration: "none", display: "block", marginTop: 4 }}>Démo agent</a>
-        </nav>
-        <div style={{ padding: "14px 16px", borderTop: `1px solid ${c.border}` }}>
-          <button onClick={() => setDark(!dark)} style={{ ...tr, width: "100%", fontSize: 12, padding: "8px 12px", borderRadius: 6, background: c.hover, color: c.textSub, border: `1px solid ${c.border}`, cursor: "pointer", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-            <span>{dark ? "☾ Mode sombre" : "○ Mode clair"}</span>
-            <span style={{ fontSize: 10, color: c.textFaint }}>basculer</span>
+    <div style={{ ...tr, display: "flex", flexDirection: isMobile ? "column" : "row", height: "100vh", background: c.bg, color: c.text, overflow: "hidden", fontFamily: "DM Sans, sans-serif" }}>
+
+      {/* ── MOBILE TOP BAR ── */}
+      {isMobile && (
+        <div style={{ ...tr, display: "flex", alignItems: "center", justifyContent: "space-between", padding: "12px 16px", background: c.sidebar, borderBottom: `1px solid ${c.border}`, flexShrink: 0 }}>
+          <div>
+            <div style={{ fontSize: 14, fontWeight: 600, color: c.text }}>◆ Optima Flow</div>
+            <div style={{ fontSize: 10, color: c.textFaint }}>platform.optimaflow.ai</div>
+          </div>
+          <button onClick={() => setDark(!dark)} style={{ ...tr, fontSize: 11, padding: "6px 12px", borderRadius: 6, background: c.hover, color: c.textSub, border: `1px solid ${c.border}`, cursor: "pointer", fontFamily: "inherit" }}>
+            {dark ? "☾" : "○"}
           </button>
         </div>
-      </aside>
+      )}
 
-      <main style={{ flex: 1, overflowY: "auto", padding: 28 }}>
+      {/* ── DESKTOP SIDEBAR ── */}
+      {!isMobile && (
+        <aside style={{ ...tr, width: 200, background: c.sidebar, borderRight: `1px solid ${c.border}`, display: "flex", flexDirection: "column", flexShrink: 0 }}>
+          <div style={{ padding: "18px 16px", borderBottom: `1px solid ${c.border}` }}>
+            <div style={{ fontSize: 15, fontWeight: 600, color: c.text }}>◆ Optima Flow</div>
+            <div style={{ fontSize: 11, color: c.textFaint, marginTop: 4 }}>platform.optimaflow.ai</div>
+          </div>
+          <nav style={{ padding: "14px 10px", display: "flex", flexDirection: "column", gap: 3, flex: 1 }}>
+            <div style={{ fontSize: 10, color: c.textFaint, letterSpacing: "1px", textTransform: "uppercase", padding: "0 8px", marginBottom: 6 }}>Navigation</div>
+            {navItems.map((item) => (
+              <button key={item.id} onClick={() => setView(item.id)} style={{
+                ...tr, textAlign: "left", fontSize: 13, padding: "8px 12px", borderRadius: 6,
+                background: view === item.id ? c.hover : "transparent",
+                color: view === item.id ? c.text : c.textMuted,
+                border: "none",
+                borderLeft: `2px solid ${view === item.id ? c.accent : "transparent"}`,
+                cursor: "pointer", outline: "none",
+                fontWeight: view === item.id ? 500 : 400,
+              }}>{item.label}</button>
+            ))}
+            <a href="/agent" style={{ ...tr, textAlign: "left", fontSize: 13, padding: "8px 12px", borderRadius: 6, background: "transparent", color: c.textMuted, borderLeft: "2px solid transparent", textDecoration: "none", display: "block", marginTop: 4 }}>Démo agent</a>
+          </nav>
+          <div style={{ padding: "14px 16px", borderTop: `1px solid ${c.border}` }}>
+            <button onClick={() => setDark(!dark)} style={{ ...tr, width: "100%", fontSize: 12, padding: "8px 12px", borderRadius: 6, background: c.hover, color: c.textSub, border: `1px solid ${c.border}`, cursor: "pointer", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+              <span>{dark ? "☾ Mode sombre" : "○ Mode clair"}</span>
+              <span style={{ fontSize: 10, color: c.textFaint }}>basculer</span>
+            </button>
+          </div>
+        </aside>
+      )}
 
-        {/* ─── DASHBOARD ─── */}
+      {/* ── MAIN CONTENT ── */}
+      <main style={{ flex: 1, overflowY: "auto", padding: isMobile ? 16 : 28, paddingBottom: isMobile ? 80 : 28 }}>
+
+        {/* ── DASHBOARD ── */}
         {view === "dashboard" && (
           <div>
-            {/* Header */}
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 28 }}>
-              <h1 style={{ fontSize: 18, fontWeight: 600, color: c.text }}>Dashboard · Optima Flow</h1>
-              <div style={{ ...tr, fontSize: 11, color: c.textMuted, background: c.card, border: `1px solid ${c.border}`, padding: "5px 12px", borderRadius: 5 }}>
-                Mis à jour il y a 8 secondes
-              </div>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 20, flexWrap: "wrap", gap: 8 }}>
+              <h1 style={{ fontSize: isMobile ? 16 : 18, fontWeight: 600, color: c.text }}>Dashboard · Optima Flow</h1>
+              <div style={{ ...tr, fontSize: 11, color: c.textMuted, background: c.card, border: `1px solid ${c.border}`, padding: "5px 12px", borderRadius: 5 }}>Mis à jour il y a 8 secondes</div>
             </div>
 
-            {/* KPI cards */}
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(4,1fr)", gap: 10, marginBottom: 24 }}>
+            <div style={{ display: "grid", gridTemplateColumns: isMobile ? "repeat(2,1fr)" : "repeat(4,1fr)", gap: 10, marginBottom: 20 }}>
               {[
-                { label: "TÂCHES AUTOMATISÉES · 7J", value: "247", delta: "↑ 18% vs semaine précédente", dc: c.green },
-                { label: "VALEUR GÉNÉRÉE · 30J", value: "14 300 €", delta: "↑ 2 480 € vs mois précédent", dc: c.green },
-                { label: "VALIDATIONS EN ATTENTE", value: leads.filter(l => l.statut === "en attente").length || "3", delta: "2 depuis + 2h", dc: c.accent },
-                { label: "UPTIME AGENTS · 30J", value: "98.4%", delta: "SLA respecté", dc: c.green },
+                { label: "TÂCHES AUTO · 7J", value: "247", delta: "↑ 18% vs semaine préc.", dc: c.green },
+                { label: "VALEUR · 30J", value: "14 300 €", delta: "↑ 2 480 € vs mois préc.", dc: c.green },
+                { label: "VALIDATIONS", value: leads.filter(l => l.statut === "en attente").length || "3", delta: "2 depuis + 2h", dc: c.accent },
+                { label: "UPTIME · 30J", value: "98.4%", delta: "SLA respecté", dc: c.green },
               ].map((k, i) => (
-                <div key={i} style={{ ...tr, background: c.card, border: `1px solid ${c.border}`, borderRadius: 10, padding: 16 }}>
-                  <div style={{ fontSize: 10, color: c.textFaint, textTransform: "uppercase", letterSpacing: "0.5px", marginBottom: 10 }}>{k.label}</div>
-                  <div style={{ fontSize: 24, fontWeight: 700, color: c.text, marginBottom: 6 }}>{k.value}</div>
-                  <div style={{ fontSize: 11, color: k.dc }}>{k.delta}</div>
+                <div key={i} style={{ ...tr, background: c.card, border: `1px solid ${c.border}`, borderRadius: 10, padding: isMobile ? 12 : 16 }}>
+                  <div style={{ fontSize: 9, color: c.textFaint, textTransform: "uppercase", letterSpacing: "0.5px", marginBottom: 8 }}>{k.label}</div>
+                  <div style={{ fontSize: isMobile ? 18 : 24, fontWeight: 700, color: c.text, marginBottom: 4 }}>{k.value}</div>
+                  <div style={{ fontSize: 10, color: k.dc }}>{k.delta}</div>
                 </div>
               ))}
             </div>
 
-            {/* Performance par département */}
-            <div style={{ fontSize: 11, fontWeight: 600, color: c.textMuted, textTransform: "uppercase", letterSpacing: "0.8px", marginBottom: 12 }}>
-              Performance par département
-            </div>
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(4,1fr)", gap: 10, marginBottom: 24 }}>
+            <div style={{ fontSize: 11, fontWeight: 600, color: c.textMuted, textTransform: "uppercase", letterSpacing: "0.8px", marginBottom: 12 }}>Performance par département</div>
+            <div style={{ display: "grid", gridTemplateColumns: isMobile ? "repeat(2,1fr)" : "repeat(4,1fr)", gap: 10, marginBottom: 20 }}>
               {deptPerf.map((dep) => (
-                <div key={dep.dept} style={{ ...tr, background: c.card, border: `1px solid ${c.border}`, borderRadius: 10, padding: 16 }}>
-                  <div style={{ fontSize: 13, fontWeight: 600, color: c.textSub, marginBottom: 14 }}>{dep.dept}</div>
-                  <div style={{ display: "flex", flexDirection: "column", gap: 7, marginBottom: 14 }}>
+                <div key={dep.dept} style={{ ...tr, background: c.card, border: `1px solid ${c.border}`, borderRadius: 10, padding: isMobile ? 12 : 16 }}>
+                  <div style={{ fontSize: 12, fontWeight: 600, color: c.textSub, marginBottom: 10 }}>{dep.dept}</div>
+                  <div style={{ display: "flex", flexDirection: "column", gap: 6, marginBottom: 10 }}>
                     {dep.metrics.map(([label, val]) => (
                       <div key={label} style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                        <span style={{ fontSize: 11, color: c.textMuted }}>{label}</span>
-                        <span style={{ fontSize: 12, fontWeight: 600, color: c.text }}>{val}</span>
+                        <span style={{ fontSize: 10, color: c.textMuted }}>{label}</span>
+                        <span style={{ fontSize: 11, fontWeight: 600, color: c.text }}>{val}</span>
                       </div>
                     ))}
                   </div>
@@ -171,77 +190,70 @@ export default function Dashboard() {
               ))}
             </div>
 
-            {/* Activité récente */}
-            <div style={{ fontSize: 11, fontWeight: 600, color: c.textMuted, textTransform: "uppercase", letterSpacing: "0.8px", marginBottom: 12 }}>
-              Activité récente
-            </div>
+            <div style={{ fontSize: 11, fontWeight: 600, color: c.textMuted, textTransform: "uppercase", letterSpacing: "0.8px", marginBottom: 12 }}>Activité récente</div>
             <div style={{ ...tr, background: c.card, border: `1px solid ${c.border}`, borderRadius: 10, overflow: "hidden" }}>
               {recentActivity.map((a, i) => (
-                <div key={i} style={{ display: "flex", gap: 16, padding: "12px 16px", borderBottom: i < recentActivity.length - 1 ? `1px solid ${c.border}` : "none", alignItems: "flex-start" }}>
-                  <span style={{ fontSize: 12, color: c.textFaint, minWidth: 44, fontWeight: 500 }}>{a.time}</span>
-                  <span style={{ fontSize: 12, color: c.textSub, flex: 1, lineHeight: 1.5 }}>{a.text}</span>
-                  <span style={{ fontSize: 10, background: c.tagBg, border: `1px solid ${c.border}`, color: c.textMuted, padding: "2px 10px", borderRadius: 4, whiteSpace: "nowrap", fontWeight: 500 }}>{a.tag}</span>
+                <div key={i} style={{ display: "flex", gap: isMobile ? 8 : 16, padding: isMobile ? "10px 12px" : "12px 16px", borderBottom: i < recentActivity.length - 1 ? `1px solid ${c.border}` : "none", alignItems: "flex-start", flexWrap: isMobile ? "wrap" : "nowrap" }}>
+                  <span style={{ fontSize: 11, color: c.textFaint, minWidth: 40, fontWeight: 500 }}>{a.time}</span>
+                  <span style={{ fontSize: 11, color: c.textSub, flex: 1, lineHeight: 1.5 }}>{a.text}</span>
+                  {!isMobile && <span style={{ fontSize: 10, background: c.tagBg, border: `1px solid ${c.border}`, color: c.textMuted, padding: "2px 10px", borderRadius: 4, whiteSpace: "nowrap", fontWeight: 500 }}>{a.tag}</span>}
                 </div>
               ))}
             </div>
           </div>
         )}
 
-        {/* ─── AGENTS ─── */}
+        {/* ── AGENTS ── */}
         {view === "agents" && (
           <div>
-            <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 28 }}>
-              <h1 style={{ fontSize: 18, fontWeight: 600, color: c.text }}>Agents — {agents.length} déployés</h1>
+            <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 20, flexWrap: "wrap", gap: 8 }}>
+              <h1 style={{ fontSize: isMobile ? 16 : 18, fontWeight: 600, color: c.text }}>Agents — {agents.length} déployés</h1>
               <div style={{ ...tr, fontSize: 11, color: c.textMuted, background: c.card, border: `1px solid ${c.border}`, padding: "5px 12px", borderRadius: 5 }}>Tous actifs sauf 1 en attente</div>
             </div>
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: 12 }}>
+            <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "repeat(3,1fr)", gap: 12 }}>
               {agents.map((agent) => (
-                <div key={agent.id} style={{ ...tr, background: c.card, border: `1px solid ${agent.status === "pending" ? c.accentBorder : c.border}`, borderRadius: 10, padding: 18 }}>
+                <div key={agent.id} style={{ ...tr, background: c.card, border: `1px solid ${agent.status === "pending" ? c.accentBorder : c.border}`, borderRadius: 10, padding: 16 }}>
                   <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 10 }}>
-                    <div style={{ width: 36, height: 36, borderRadius: "50%", background: c.cardAlt, border: `1px solid ${c.border}`, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 14, fontWeight: 600, color: c.textSub }}>{agent.name[0]}</div>
+                    <div style={{ width: 36, height: 36, borderRadius: "50%", background: c.cardAlt, border: `1px solid ${c.border}`, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 14, fontWeight: 600, color: c.textSub, flexShrink: 0 }}>{agent.name[0]}</div>
                     <div>
                       <div style={{ fontSize: 14, fontWeight: 600, color: c.text }}>{agent.name}</div>
                       <div style={{ fontSize: 10, color: c.textFaint, textTransform: "uppercase", letterSpacing: "0.5px", marginTop: 1 }}>{agent.role}</div>
                     </div>
                   </div>
                   <div style={{ fontSize: 10, color: c.textFaint, textTransform: "uppercase", letterSpacing: "0.5px", marginBottom: 8 }}>{agent.dept}</div>
-                  <div style={{ display: "flex", gap: 4, flexWrap: "wrap", marginBottom: 14 }}>
+                  <div style={{ display: "flex", gap: 4, flexWrap: "wrap", marginBottom: 12 }}>
                     {agent.tools.map((tool) => (
                       <span key={tool} style={{ fontSize: 10, background: c.tagBg, border: `1px solid ${c.border}`, color: c.textMuted, padding: "3px 8px", borderRadius: 4, fontWeight: 500 }}>{tool}</span>
                     ))}
                   </div>
                   <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                     <div style={{ display: "flex", alignItems: "center", gap: 6, fontSize: 11, color: c.textMuted }}>
-                      <div style={{ width: 7, height: 7, borderRadius: "50%", background: agent.status === "active" ? c.green : c.accent }} />
+                      <div style={{ width: 7, height: 7, borderRadius: "50%", background: agent.status === "active" ? c.green : c.accent, flexShrink: 0 }} />
                       {agent.task}
                     </div>
-                    <button style={{ fontSize: 11, background: c.accentBg, color: c.accent, border: `1px solid ${c.accentBorder}`, padding: "4px 10px", borderRadius: 5, cursor: "pointer", fontWeight: 500 }}>Parler</button>
+                    <button style={{ fontSize: 11, background: c.accentBg, color: c.accent, border: `1px solid ${c.accentBorder}`, padding: "4px 10px", borderRadius: 5, cursor: "pointer", fontWeight: 500, flexShrink: 0 }}>Parler</button>
                   </div>
                 </div>
               ))}
-              <div style={{ background: c.card, border: `1px dashed ${c.border}`, borderRadius: 10, padding: 18, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 10, minHeight: 180 }}>
-                <div style={{ width: 32, height: 32, borderRadius: "50%", border: `1px dashed ${c.border}`, display: "flex", alignItems: "center", justifyContent: "center", color: c.textFaint, fontSize: 20 }}>+</div>
-                <div style={{ fontSize: 12, color: c.textMuted, textAlign: "center", lineHeight: 1.6 }}>Ajouter un agent<br /><span style={{ fontSize: 10, color: c.textFaint }}>Extension future</span></div>
-              </div>
             </div>
           </div>
         )}
 
-        {/* ─── TASKS ─── */}
+        {/* ── TASKS ── */}
         {view === "tasks" && (
           <div>
-            <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 28 }}>
-              <h1 style={{ fontSize: 18, fontWeight: 600, color: c.text }}>Task Board · Temps réel</h1>
+            <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 20, flexWrap: "wrap", gap: 8 }}>
+              <h1 style={{ fontSize: isMobile ? 16 : 18, fontWeight: 600, color: c.text }}>Task Board · Temps réel</h1>
               <div style={{ fontSize: 11, color: c.textMuted, background: c.card, border: `1px solid ${c.border}`, padding: "5px 12px", borderRadius: 5 }}>Mis à jour il y a 8 secondes</div>
             </div>
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: 14 }}>
+            <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "repeat(3,1fr)", gap: 14 }}>
               {[
                 { title: "En cours", color: c.textSub, items: tasks.ongoing, ib: c.border },
                 { title: "Validation requise", color: c.accent, items: tasks.validation, ib: c.accentBorder },
                 { title: "Terminé · 24h", color: c.green, items: tasks.done, ib: c.border },
               ].map((col) => (
                 <div key={col.title}>
-                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 12 }}>
+                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 10 }}>
                     <span style={{ fontSize: 13, fontWeight: 600, color: col.color }}>{col.title}</span>
                     <span style={{ fontSize: 11, background: c.cardAlt, color: c.textMuted, padding: "2px 10px", borderRadius: 20, fontWeight: 500 }}>{col.items.length}</span>
                   </div>
@@ -261,21 +273,21 @@ export default function Dashboard() {
           </div>
         )}
 
-        {/* ─── ORG ─── */}
+        {/* ── ORG ── */}
         {view === "org" && (
           <>
             <div>
-              <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 32 }}>
-                <h1 style={{ fontSize: 18, fontWeight: 600, color: c.text }}>Organigramme agentique</h1>
+              <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 24, flexWrap: "wrap", gap: 8 }}>
+                <h1 style={{ fontSize: isMobile ? 16 : 18, fontWeight: 600, color: c.text }}>Organigramme agentique</h1>
                 <div style={{ fontSize: 11, color: c.textMuted, background: c.card, border: `1px solid ${c.border}`, padding: "5px 12px", borderRadius: 5 }}>6 agents · 6 départements</div>
               </div>
-              <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 24 }}>
-                <div style={{ background: c.cardAlt, border: `1px solid ${c.accentBorder}`, padding: "12px 28px", borderRadius: 8, textAlign: "center" }}>
+              <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 20 }}>
+                <div style={{ background: c.cardAlt, border: `1px solid ${c.accentBorder}`, padding: "12px 24px", borderRadius: 8, textAlign: "center" }}>
                   <div style={{ fontSize: 10, color: c.textFaint, textTransform: "uppercase", letterSpacing: "0.8px", marginBottom: 4 }}>Pilotage humain</div>
                   <div style={{ fontSize: 14, fontWeight: 600, color: c.accent }}>Kilian · Fondateur</div>
                 </div>
-                <div style={{ width: 1, height: 24, background: c.border }} />
-                <div style={{ display: "grid", gridTemplateColumns: "repeat(4,1fr)", gap: 12, width: "100%" }}>
+                <div style={{ width: 1, height: 20, background: c.border }} />
+                <div style={{ display: "grid", gridTemplateColumns: isMobile ? "repeat(2,1fr)" : "repeat(4,1fr)", gap: 10, width: "100%" }}>
                   {[
                     { name: "Commercial", agents: ["Tom · Relance inactifs"] },
                     { name: "Communication", agents: ["Alex · Gestion email"] },
@@ -285,12 +297,12 @@ export default function Dashboard() {
                     { name: "Admin", agents: ["Sarah · Facturation"] },
                   ].map((dep) => (
                     <div key={dep.name}>
-                      <div style={{ background: c.card, border: `1px solid ${c.border}`, borderRadius: 8, padding: "10px 14px", textAlign: "center", marginBottom: 8 }}>
-                        <div style={{ fontSize: 13, fontWeight: 600, color: c.textSub }}>{dep.name}</div>
+                      <div style={{ background: c.card, border: `1px solid ${c.border}`, borderRadius: 8, padding: "8px 12px", textAlign: "center", marginBottom: 6 }}>
+                        <div style={{ fontSize: 12, fontWeight: 600, color: c.textSub }}>{dep.name}</div>
                       </div>
                       {dep.agents.map((a) => (
-                        <div key={a} style={{ background: c.cardAlt, border: `1px solid ${c.border}`, borderRadius: 6, padding: "7px 12px", textAlign: "center", marginBottom: 5 }}>
-                          <div style={{ fontSize: 12, color: c.textMuted, fontWeight: 500 }}>{a}</div>
+                        <div key={a} style={{ background: c.cardAlt, border: `1px solid ${c.border}`, borderRadius: 6, padding: "6px 10px", textAlign: "center" }}>
+                          <div style={{ fontSize: 11, color: c.textMuted, fontWeight: 500 }}>{a}</div>
                         </div>
                       ))}
                     </div>
@@ -298,67 +310,82 @@ export default function Dashboard() {
                 </div>
               </div>
             </div>
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: 40, marginTop: 24, width: "100%" }}>
-              {([["6", "Agents déployés"], ["6", "Départements couverts"], ["145 000 €", "Économies estimées / an"]] as [string, string][]).map(([v, l]) => (
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: isMobile ? 16 : 40, marginTop: 24, width: "100%" }}>
+              {([["6", "Agents déployés"], ["6", "Départements"], ["145 000 €", "Économies / an"]] as [string, string][]).map(([v, l]) => (
                 <div key={l} style={{ textAlign: "center" }}>
-                  <div style={{ fontSize: 28, fontWeight: 700, color: c.accent }}>{v}</div>
-                  <div style={{ fontSize: 10, color: c.textMuted, textTransform: "uppercase", letterSpacing: "0.8px", marginTop: 6, fontWeight: 500 }}>{l}</div>
+                  <div style={{ fontSize: isMobile ? 22 : 28, fontWeight: 700, color: c.accent }}>{v}</div>
+                  <div style={{ fontSize: 9, color: c.textMuted, textTransform: "uppercase", letterSpacing: "0.8px", marginTop: 6, fontWeight: 500 }}>{l}</div>
                 </div>
               ))}
             </div>
           </>
         )}
 
-  {/* ─── PRICING ─── */}
-{view === "pricing" && (
-  <div>
-    <div style={{ marginBottom: 32 }}>
-      <h1 style={{ fontSize: 18, fontWeight: 600, color: c.text }}>L&apos;offre en 3 niveaux</h1>
-    </div>
+        {/* ── PRICING ── */}
+        {view === "pricing" && (
+          <div>
+            <div style={{ marginBottom: 24 }}>
+              <h1 style={{ fontSize: isMobile ? 16 : 18, fontWeight: 600, color: c.text }}>L&apos;offre en 3 niveaux</h1>
+            </div>
+            <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "repeat(3,1fr)", gap: 14, marginBottom: 28 }}>
+              {[
+                { num: "01", name: "Starter", desc: "Tu veux tester sans t'engager. On déploie un premier agent opérationnel en une semaine.", price: "2 000 €", features: ["Setup complet", "1 agent au choix", "Dashboard de pilotage", "Formation équipe (1h30)"], featured: false },
+                { num: "02", name: "Avancé", desc: "Tu veux automatiser plusieurs départements d'un coup. On déploie trois agents intégrés dans tes outils.", price: "4 500 €", features: ["Setup complet", "3 agents au choix", "Dashboard de pilotage", "Formation équipe (1h30)", "Intégration outils existants"], featured: true },
+                { num: "03", name: "Sur mesure", desc: "Tu veux une infrastructure IA construite autour de tes process. Cinq agents, un dashboard à tes couleurs.", price: "6 000 €", features: ["Setup complet", "5 agents sur mesure", "Dashboard personnalisé", "Formation équipe (1h30)", "Intégration avancée", "Support prioritaire 24h"], featured: false },
+              ].map((plan) => (
+                <div key={plan.num} style={{ background: plan.featured ? c.cardAlt : c.card, border: `1px solid ${plan.featured ? c.accentBorder : c.border}`, borderRadius: 12, padding: isMobile ? 20 : 28 }}>
+                  <div style={{ fontSize: 10, color: c.textFaint, textTransform: "uppercase", letterSpacing: "1px", marginBottom: 6, fontWeight: 600 }}>{plan.num}</div>
+                  <div style={{ fontSize: 17, fontWeight: 600, color: c.accent, marginBottom: 8 }}>{plan.name}</div>
+                  <div style={{ fontSize: 12, color: c.textMuted, marginBottom: 16, lineHeight: 1.7 }}>{plan.desc}</div>
+                  <div style={{ marginBottom: 16, paddingBottom: 16, borderBottom: `1px solid ${c.border}` }}>
+                    <span style={{ fontSize: 20, fontWeight: 700, color: c.text }}>{plan.price}</span>
+                  </div>
+                  <ul style={{ listStyle: "none", display: "flex", flexDirection: "column", gap: 8 }}>
+                    {plan.features.map((f) => (
+                      <li key={f} style={{ display: "flex", alignItems: "center", gap: 8, fontSize: 12, color: c.textSub }}>
+                        <span style={{ color: c.green, fontWeight: 700 }}>✓</span>{f}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              ))}
+            </div>
 
-    <div style={{ display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: 18, marginBottom: 32 }}>
-      {[
-        { num: "01", name: "Starter", desc: "Vous voulez tester sans vous engager ? On déploie un premier agent opérationnel en une semaine.", price: "2 000 €", features: ["Setup complet", "1 agent au choix", "Dashboard de pilotage", "Formation équipe (1h30)"], featured: false },
-        { num: "02", name: "Avancé", desc: "Vous voulez automatiser plusieurs départements d'un coup ? On déploie trois agents intégrés dans vos outils.", price: "4 500 €", features: ["Setup complet", "3 agents au choix", "Dashboard de pilotage", "Formation équipe (1h30)", "Intégration outils existants"], featured: true },
-        { num: "03", name: "Sur mesure", desc: "Vous voulez une infrastructure IA construite autour de vos process ? Cinq agents, un dashboard à vos couleurs.", price: "6 500 €", features: ["Setup complet", "5 agents sur mesure", "Dashboard personnalisé", "Formation équipe (1h30)", "Intégration avancée", "Support prioritaire 24h"], featured: false },
-      ].map((plan) => (
-        <div key={plan.num} style={{ background: plan.featured ? c.cardAlt : c.card, border: `1px solid ${plan.featured ? c.accentBorder : c.border}`, borderRadius: 12, padding: 28 }}>
-          <div style={{ fontSize: 10, color: c.textFaint, textTransform: "uppercase", letterSpacing: "1px", marginBottom: 8, fontWeight: 600 }}>{plan.num}</div>
-          <div style={{ fontSize: 18, fontWeight: 600, color: c.accent, marginBottom: 10 }}>{plan.name}</div>
-          <div style={{ fontSize: 12, color: c.textMuted, marginBottom: 20, lineHeight: 1.7 }}>{plan.desc}</div>
-          <div style={{ marginBottom: 20, paddingBottom: 20, borderBottom: `1px solid ${c.border}` }}>
-            <span style={{ fontSize: 22, fontWeight: 700, color: c.text }}>{plan.price}</span>
+            <div style={{ fontSize: 11, fontWeight: 600, color: c.textMuted, textTransform: "uppercase", letterSpacing: "0.8px", marginBottom: 12 }}>Suppléments</div>
+            <div style={{ display: "grid", gridTemplateColumns: isMobile ? "repeat(2,1fr)" : "repeat(4,1fr)", gap: 10 }}>
+              {[
+                { nom: "Nouvel agent", prix: "1 500 €", detail: "par agent" },
+                { nom: "Formation équipe", prix: "300 €", detail: "1h30" },
+                { nom: "Maintenance", prix: "150 €", detail: "/ mois / agent" },
+                { nom: "Mise à jour IA", prix: "200 €", detail: "/ mois" },
+              ].map((s) => (
+                <div key={s.nom} style={{ background: c.card, border: `1px solid ${c.border}`, borderRadius: 10, padding: 14 }}>
+                  <div style={{ fontSize: 10, color: c.textFaint, marginBottom: 6 }}>{s.nom}</div>
+                  <div style={{ fontSize: 16, fontWeight: 700, color: c.text }}>{s.prix}</div>
+                  <div style={{ fontSize: 10, color: c.textMuted, marginTop: 4 }}>{s.detail}</div>
+                </div>
+              ))}
+            </div>
           </div>
-          <ul style={{ listStyle: "none", display: "flex", flexDirection: "column", gap: 10 }}>
-            {plan.features.map((f) => (
-              <li key={f} style={{ display: "flex", alignItems: "center", gap: 10, fontSize: 12, color: c.textSub }}>
-                <span style={{ color: c.green, fontWeight: 700, fontSize: 14 }}>✓</span>{f}
-              </li>
-            ))}
-          </ul>
-        </div>
-      ))}
-    </div>
-
-    <div style={{ fontSize: 11, fontWeight: 600, color: c.textMuted, textTransform: "uppercase", letterSpacing: "0.8px", marginBottom: 14 }}>Suppléments</div>
-    <div style={{ display: "grid", gridTemplateColumns: "repeat(4,1fr)", gap: 12 }}>
-      {[
-        { nom: "Nouvel agent", prix: "1 500 €", detail: "par agent" },
-        { nom: "Formation équipe", prix: "300 €", detail: "1h30" },
-        { nom: "Maintenance", prix: "150 €", detail: "/ mois / agent" },
-        { nom: "Mise à jour IA", prix: "200 €", detail: "/ mois — agents toujours à jour" },
-      ].map((s) => (
-        <div key={s.nom} style={{ background: c.card, border: `1px solid ${c.border}`, borderRadius: 10, padding: 18 }}>
-          <div style={{ fontSize: 11, color: c.textFaint, marginBottom: 6 }}>{s.nom}</div>
-          <div style={{ fontSize: 18, fontWeight: 700, color: c.text }}>{s.prix}</div>
-          <div style={{ fontSize: 11, color: c.textMuted, marginTop: 4 }}>{s.detail}</div>
-        </div>
-      ))}
-    </div>
-  </div>
-)}
+        )}
 
       </main>
+
+      {/* ── MOBILE BOTTOM NAV ── */}
+      {isMobile && (
+        <nav style={{ ...tr, position: "fixed", bottom: 0, left: 0, right: 0, background: c.sidebar, borderTop: `1px solid ${c.border}`, display: "flex", zIndex: 100 }}>
+          {navItems.map((item) => (
+            <button key={item.id} onClick={() => setView(item.id)} style={{
+              ...tr, flex: 1, padding: "10px 4px", fontSize: 10, fontWeight: view === item.id ? 600 : 400,
+              color: view === item.id ? c.accent : c.textMuted,
+              background: "transparent", border: "none", cursor: "pointer", fontFamily: "inherit",
+              borderTop: `2px solid ${view === item.id ? c.accent : "transparent"}`,
+            }}>{item.label}</button>
+          ))}
+          <a href="/agent" style={{ flex: 1, padding: "10px 4px", fontSize: 10, color: c.textMuted, textDecoration: "none", display: "flex", alignItems: "center", justifyContent: "center", borderTop: "2px solid transparent" }}>Démo</a>
+        </nav>
+      )}
+
     </div>
   );
 }
