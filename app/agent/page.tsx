@@ -29,8 +29,17 @@ export default function AgentPage() {
   const [dark, setDark] = useState(true);
   const [showSuggests, setShowSuggests] = useState(true);
   const [seconds, setSeconds] = useState(8);
+  const [isMobile, setIsMobile] = useState(false);
+  const [mobileTab, setMobileTab] = useState<"chat" | "tasks">("chat");
   const chatRef = useRef<HTMLDivElement>(null);
   const history = useRef<{ role: string; content: string }[]>([]);
+
+  useEffect(() => {
+    const check = () => setIsMobile(window.innerWidth < 768);
+    check();
+    window.addEventListener("resize", check);
+    return () => window.removeEventListener("resize", check);
+  }, []);
 
   useEffect(() => {
     const mq = window.matchMedia("(prefers-color-scheme: dark)");
@@ -86,47 +95,101 @@ export default function AgentPage() {
 
   const tr = { transition: "background 0.2s, color 0.2s, border-color 0.2s" };
 
+  const TasksPanel = () => (
+    <div style={{ ...tr, background: c.card, border: `1px solid ${c.border}`, borderRadius: isMobile ? 0 : 12, display: "flex", flexDirection: "column", overflow: "hidden", flex: 1 }}>
+      <div style={{ ...tr, padding: "12px 16px", borderBottom: `1px solid ${c.border}`, display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+        <div style={{ fontSize: 12, fontWeight: 500, color: c.textSub }}>Tâches en cours</div>
+        <div style={{ fontSize: 10, color: c.textFaint }}>Mis à jour il y a {seconds}s</div>
+      </div>
+      <div style={{ flex: 1, overflowY: "auto", padding: 14 }}>
+        <div style={{ fontSize: 10, fontWeight: 600, color: c.textFaint, textTransform: "uppercase", letterSpacing: "0.6px", marginBottom: 8 }}>En attente de validation</div>
+        {[
+          { title: "Réponse à Martin SAS — demande de devis", time: "il y a 23 min", badge: "En attente", badgeBg: "#3a2a00", badgeColor: c.accent },
+          { title: "Relance client Lambert — facture impayée", time: "il y a 1h", badge: "Votre accord", badgeBg: "#1e1a3a", badgeColor: "#9a8ae0" },
+        ].map((t, i) => (
+          <div key={i} style={{ ...tr, background: c.cardAlt, border: `1px solid ${c.border}`, borderRadius: 8, padding: "10px 12px", marginBottom: 6 }}>
+            <div style={{ display: "flex", justifyContent: "space-between", gap: 8, marginBottom: 4 }}>
+              <div style={{ fontSize: 12, color: c.text, fontWeight: 500, lineHeight: 1.3, flex: 1 }}>{t.title}</div>
+              <span style={{ fontSize: 9, padding: "2px 8px", borderRadius: 20, background: t.badgeBg, color: t.badgeColor, whiteSpace: "nowrap", flexShrink: 0 }}>{t.badge}</span>
+            </div>
+            <div style={{ fontSize: 10, color: c.textFaint }}>Alex a rédigé une réponse · {t.time}</div>
+          </div>
+        ))}
+        <div style={{ fontSize: 10, fontWeight: 600, color: c.textFaint, textTransform: "uppercase", letterSpacing: "0.6px", marginBottom: 8, marginTop: 16 }}>Emails traités aujourd&apos;hui</div>
+        {EMAILS.map((e, i) => (
+          <div key={i} style={{ ...tr, borderLeft: `2px solid ${c.green}`, background: c.cardAlt, borderRadius: "0 8px 8px 0", padding: "8px 12px", marginBottom: 6 }}>
+            <div style={{ fontSize: 12, fontWeight: 500, color: c.text }}>{e.from}</div>
+            <div style={{ fontSize: 11, color: c.textMuted, marginTop: 1 }}>{e.subject}</div>
+            <div style={{ fontSize: 10, color: c.green, marginTop: 4 }}>→ {e.action}</div>
+          </div>
+        ))}
+        <div style={{ fontSize: 10, fontWeight: 600, color: c.textFaint, textTransform: "uppercase", letterSpacing: "0.6px", marginBottom: 8, marginTop: 16 }}>Statistiques du jour</div>
+        <div style={{ ...tr, background: c.cardAlt, border: `1px solid ${c.border}`, borderRadius: 8, padding: "12px 16px" }}>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: 8, textAlign: "center" }}>
+            {([["12", "Reçus", c.text], ["9", "Traités", c.green], ["2", "En attente", c.accent]] as [string, string, string][]).map(([v, l, col]) => (
+              <div key={l}>
+                <div style={{ fontSize: 22, fontWeight: 600, color: col }}>{v}</div>
+                <div style={{ fontSize: 10, color: c.textFaint, marginTop: 2 }}>{l}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+
   return (
-    <div style={{ ...tr, display: "flex", height: "100vh", background: c.bg, color: c.text, fontFamily: "DM Sans, sans-serif", overflow: "hidden" }}>
+    <div style={{ ...tr, display: "flex", flexDirection: "column", height: "100vh", background: c.bg, color: c.text, fontFamily: "DM Sans, sans-serif", overflow: "hidden" }}>
       <style>{`@keyframes pulse{0%,80%,100%{opacity:0.3}40%{opacity:1}}`}</style>
 
-      {/* Sidebar */}
-      <aside style={{ ...tr, width: 200, background: c.sidebar, borderRight: `1px solid ${c.border}`, display: "flex", flexDirection: "column", flexShrink: 0 }}>
-        <div style={{ padding: "18px 16px", borderBottom: `1px solid ${c.border}` }}>
-          <div style={{ fontSize: 15, fontWeight: 600, color: c.text }}>◆ Optima Flow</div>
-          <div style={{ fontSize: 11, color: c.textFaint, marginTop: 4 }}>platform.optimaflow.ai</div>
-        </div>
-        <nav style={{ padding: "14px 10px", display: "flex", flexDirection: "column", gap: 3, flex: 1 }}>
-          <div style={{ fontSize: 10, color: c.textFaint, letterSpacing: "1px", textTransform: "uppercase", padding: "0 8px", marginBottom: 6 }}>Navigation</div>
-          {["Dashboard", "Agents", "Task Board", "Organigramme", "Offre"].map((item) => (
-            <a key={item} href="/" style={{ ...tr, fontSize: 13, padding: "8px 12px", borderRadius: 6, color: c.textMuted, textDecoration: "none", display: "block", borderLeft: "2px solid transparent" }}>{item}</a>
-          ))}
-          <div style={{ ...tr, fontSize: 13, padding: "8px 12px", borderRadius: 6, color: c.text, borderLeft: `2px solid ${c.accent}`, background: c.hover, fontWeight: 500, marginTop: 4 }}>Démo agent</div>
-        </nav>
-        <div style={{ padding: "14px 16px", borderTop: `1px solid ${c.border}` }}>
-          <button onClick={() => setDark(!dark)} style={{ ...tr, width: "100%", fontSize: 12, padding: "8px 12px", borderRadius: 6, background: c.hover, color: c.textSub, border: `1px solid ${c.border}`, cursor: "pointer", display: "flex", justifyContent: "space-between", alignItems: "center", fontFamily: "inherit" }}>
-            <span>{dark ? "☾ Mode sombre" : "○ Mode clair"}</span>
-            <span style={{ fontSize: 10, color: c.textFaint }}>basculer</span>
-          </button>
-        </div>
-      </aside>
-
-      {/* Main */}
-      <main style={{ flex: 1, display: "flex", flexDirection: "column", overflow: "hidden" }}>
-        <div style={{ ...tr, padding: "16px 24px", borderBottom: `1px solid ${c.border}`, display: "flex", alignItems: "center", gap: 12 }}>
-          <div style={{ width: 10, height: 10, borderRadius: "50%", background: c.green }} />
-          <div>
-            <div style={{ fontSize: 16, fontWeight: 600, color: c.text }}>Alex — Agent gestion email</div>
-            <div style={{ fontSize: 11, color: c.textFaint, marginTop: 1 }}>Actif · 12 emails traités aujourd&apos;hui · répond en direct</div>
+      {/* ── TOP BAR ── */}
+      <div style={{ ...tr, display: "flex", alignItems: "center", gap: 10, padding: isMobile ? "10px 14px" : "14px 24px", borderBottom: `1px solid ${c.border}`, background: c.sidebar, flexShrink: 0 }}>
+        {isMobile && (
+          <a href="/" style={{ fontSize: 18, color: c.textMuted, textDecoration: "none", marginRight: 4 }}>‹</a>
+        )}
+        {!isMobile && (
+          <div style={{ marginRight: 8 }}>
+            <div style={{ fontSize: 13, fontWeight: 600, color: c.text }}>◆ Optima Flow</div>
           </div>
-          <div style={{ ...tr, marginLeft: "auto", fontSize: 10, color: c.textMuted, background: c.card, border: `1px solid ${c.border}`, padding: "4px 10px", borderRadius: 4 }}>DÉMO INTERACTIVE · OPTIMA FLOW</div>
+        )}
+        <div style={{ width: 8, height: 8, borderRadius: "50%", background: c.green, flexShrink: 0 }} />
+        <div style={{ flex: 1, minWidth: 0 }}>
+          <div style={{ fontSize: isMobile ? 13 : 15, fontWeight: 600, color: c.text }}>Alex — Agent gestion email</div>
+          <div style={{ fontSize: 10, color: c.textFaint, marginTop: 1 }}>Actif · 12 emails traités aujourd&apos;hui · répond en direct</div>
         </div>
+        <button onClick={() => setDark(!dark)} style={{ ...tr, fontSize: 11, padding: "5px 10px", borderRadius: 6, background: c.hover, color: c.textSub, border: `1px solid ${c.border}`, cursor: "pointer", fontFamily: "inherit", flexShrink: 0 }}>
+          {dark ? "☾" : "○"}
+        </button>
+        {!isMobile && (
+          <div style={{ ...tr, fontSize: 10, color: c.textMuted, background: c.card, border: `1px solid ${c.border}`, padding: "4px 10px", borderRadius: 4, flexShrink: 0 }}>DÉMO INTERACTIVE · OPTIMA FLOW</div>
+        )}
+      </div>
 
-        <div style={{ flex: 1, display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16, padding: 20, overflow: "hidden" }}>
+      {/* ── MOBILE TABS ── */}
+      {isMobile && (
+        <div style={{ ...tr, display: "flex", borderBottom: `1px solid ${c.border}`, background: c.sidebar, flexShrink: 0 }}>
+          {(["chat", "tasks"] as const).map((tab) => (
+            <button key={tab} onClick={() => setMobileTab(tab)} style={{
+              ...tr, flex: 1, padding: "10px", fontSize: 12, fontWeight: mobileTab === tab ? 600 : 400,
+              color: mobileTab === tab ? c.accent : c.textMuted,
+              background: "transparent", border: "none", cursor: "pointer", fontFamily: "inherit",
+              borderBottom: `2px solid ${mobileTab === tab ? c.accent : "transparent"}`,
+            }}>
+              {tab === "chat" ? "Conversation" : "Tâches en cours"}
+            </button>
+          ))}
+        </div>
+      )}
 
-          {/* Chat */}
-          <div style={{ ...tr, background: c.card, border: `1px solid ${c.border}`, borderRadius: 12, display: "flex", flexDirection: "column", overflow: "hidden" }}>
-            <div style={{ ...tr, padding: "12px 16px", borderBottom: `1px solid ${c.border}`, fontSize: 12, fontWeight: 500, color: c.textSub }}>Conversation avec Alex</div>
+      {/* ── CONTENT ── */}
+      <div style={{ flex: 1, display: isMobile ? "flex" : "grid", gridTemplateColumns: isMobile ? undefined : "1fr 1fr", flexDirection: "column", gap: isMobile ? 0 : 16, padding: isMobile ? 0 : 20, overflow: "hidden" }}>
+
+        {/* Chat */}
+        {(!isMobile || mobileTab === "chat") && (
+          <div style={{ ...tr, background: c.card, border: isMobile ? "none" : `1px solid ${c.border}`, borderRadius: isMobile ? 0 : 12, display: "flex", flexDirection: "column", overflow: "hidden", flex: 1 }}>
+            {!isMobile && (
+              <div style={{ ...tr, padding: "12px 16px", borderBottom: `1px solid ${c.border}`, fontSize: 12, fontWeight: 500, color: c.textSub }}>Conversation avec Alex</div>
+            )}
             <div ref={chatRef} style={{ flex: 1, overflowY: "auto", padding: 14, display: "flex", flexDirection: "column", gap: 12 }}>
               {messages.map((m, i) => (
                 <div key={i} style={{ display: "flex", gap: 8, flexDirection: m.role === "user" ? "row-reverse" : "row", alignItems: "flex-start" }}>
@@ -161,50 +224,11 @@ export default function AgentPage() {
               <button onClick={() => send()} disabled={loading || !input.trim()} style={{ padding: "8px 16px", background: c.green, color: "#fff", border: "none", borderRadius: 8, fontSize: 12, cursor: "pointer", fontFamily: "inherit", opacity: loading || !input.trim() ? 0.5 : 1 }}>Envoyer</button>
             </div>
           </div>
+        )}
 
-          {/* Tasks */}
-          <div style={{ ...tr, background: c.card, border: `1px solid ${c.border}`, borderRadius: 12, display: "flex", flexDirection: "column", overflow: "hidden" }}>
-            <div style={{ ...tr, padding: "12px 16px", borderBottom: `1px solid ${c.border}`, display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-              <div style={{ fontSize: 12, fontWeight: 500, color: c.textSub }}>Tâches en cours</div>
-              <div style={{ fontSize: 10, color: c.textFaint }}>Mis à jour il y a {seconds}s</div>
-            </div>
-            <div style={{ flex: 1, overflowY: "auto", padding: 14 }}>
-              <div style={{ fontSize: 10, fontWeight: 600, color: c.textFaint, textTransform: "uppercase", letterSpacing: "0.6px", marginBottom: 8 }}>En attente de validation</div>
-              {[
-                { title: "Réponse à Martin SAS — demande de devis", time: "il y a 23 min", badge: "En attente", badgeBg: "#3a2a00", badgeColor: c.accent },
-                { title: "Relance client Lambert — facture impayée", time: "il y a 1h", badge: "Votre accord", badgeBg: "#1e1a3a", badgeColor: "#9a8ae0" },
-              ].map((t, i) => (
-                <div key={i} style={{ ...tr, background: c.cardAlt, border: `1px solid ${c.border}`, borderRadius: 8, padding: "10px 12px", marginBottom: 6 }}>
-                  <div style={{ display: "flex", justifyContent: "space-between", gap: 8, marginBottom: 4 }}>
-                    <div style={{ fontSize: 12, color: c.text, fontWeight: 500, lineHeight: 1.3, flex: 1 }}>{t.title}</div>
-                    <span style={{ fontSize: 9, padding: "2px 8px", borderRadius: 20, background: t.badgeBg, color: t.badgeColor, whiteSpace: "nowrap", flexShrink: 0 }}>{t.badge}</span>
-                  </div>
-                  <div style={{ fontSize: 10, color: c.textFaint }}>Alex a rédigé une réponse · {t.time}</div>
-                </div>
-              ))}
-              <div style={{ fontSize: 10, fontWeight: 600, color: c.textFaint, textTransform: "uppercase", letterSpacing: "0.6px", marginBottom: 8, marginTop: 16 }}>Emails traités aujourd&apos;hui</div>
-              {EMAILS.map((e, i) => (
-                <div key={i} style={{ ...tr, borderLeft: `2px solid ${c.green}`, background: c.cardAlt, borderRadius: "0 8px 8px 0", padding: "8px 12px", marginBottom: 6 }}>
-                  <div style={{ fontSize: 12, fontWeight: 500, color: c.text }}>{e.from}</div>
-                  <div style={{ fontSize: 11, color: c.textMuted, marginTop: 1 }}>{e.subject}</div>
-                  <div style={{ fontSize: 10, color: c.green, marginTop: 4 }}>→ {e.action}</div>
-                </div>
-              ))}
-              <div style={{ fontSize: 10, fontWeight: 600, color: c.textFaint, textTransform: "uppercase", letterSpacing: "0.6px", marginBottom: 8, marginTop: 16 }}>Statistiques du jour</div>
-              <div style={{ ...tr, background: c.cardAlt, border: `1px solid ${c.border}`, borderRadius: 8, padding: "12px 16px" }}>
-                <div style={{ display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: 8, textAlign: "center" }}>
-                  {([["12", "Reçus", c.text], ["9", "Traités", c.green], ["2", "En attente", c.accent]] as [string, string, string][]).map(([v, l, col]) => (
-                    <div key={l}>
-                      <div style={{ fontSize: 22, fontWeight: 600, color: col }}>{v}</div>
-                      <div style={{ fontSize: 10, color: c.textFaint, marginTop: 2 }}>{l}</div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </main>
+        {/* Tasks */}
+        {(!isMobile || mobileTab === "tasks") && <TasksPanel />}
+      </div>
     </div>
   );
 }
