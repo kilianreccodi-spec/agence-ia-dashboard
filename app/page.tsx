@@ -318,9 +318,9 @@ export default function Dashboard() {
 
     <div style={{ display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: 18, marginBottom: 32 }}>
       {[
-        { num: "01", name: "Starter", desc: "Un premier agent déployé, prêt à fonctionner en une semaine.", price: "1 500 €", detail: "one-shot", features: ["Setup complet", "1 agent au choix", "Dashboard de pilotage", "Formation équipe (1h30)"], featured: false },
-        { num: "02", name: "Avancé", desc: "Trois agents pour couvrir les départements clés de ton activité.", price: "3 500 €", detail: "one-shot", features: ["Setup complet", "3 agents au choix", "Dashboard de pilotage", "Formation équipe (1h30)", "Intégration outils existants"], featured: true },
-        { num: "03", name: "Sur mesure", desc: "Cinq agents construits autour de tes process, avec un dashboard personnalisé à tes KPIs.", price: "6 000 €", detail: "one-shot", features: ["Setup complet", "5 agents sur mesure", "Dashboard personnalisé", "Formation équipe (1h30)", "Intégration avancée", "Support prioritaire 24h"], featured: false },
+        { num: "01", name: "Starter", desc: "Vous voulez tester sans vous engager ? On déploie un premier agent opérationnel en une semaine.", price: "2 000 €", features: ["Setup complet", "1 agent au choix", "Dashboard de pilotage", "Formation équipe (1h30)"], featured: false },
+        { num: "02", name: "Avancé", desc: "Vous voulez automatiser plusieurs départements d'un coup ? On déploie trois agents intégrés dans vos outils.", price: "4 500 €", features: ["Setup complet", "3 agents au choix", "Dashboard de pilotage", "Formation équipe (1h30)", "Intégration outils existants"], featured: true },
+        { num: "03", name: "Sur mesure", desc: "Vous voulez une infrastructure IA construite autour de vos process ? Cinq agents, un dashboard à vos couleurs.", price: "6 500 €", features: ["Setup complet", "5 agents sur mesure", "Dashboard personnalisé", "Formation équipe (1h30)", "Intégration avancée", "Support prioritaire 24h"], featured: false },
       ].map((plan) => (
         <div key={plan.num} style={{ background: plan.featured ? c.cardAlt : c.card, border: `1px solid ${plan.featured ? c.accentBorder : c.border}`, borderRadius: 12, padding: 28 }}>
           <div style={{ fontSize: 10, color: c.textFaint, textTransform: "uppercase", letterSpacing: "1px", marginBottom: 8, fontWeight: 600 }}>{plan.num}</div>
@@ -343,10 +343,10 @@ export default function Dashboard() {
     <div style={{ fontSize: 11, fontWeight: 600, color: c.textMuted, textTransform: "uppercase", letterSpacing: "0.8px", marginBottom: 14 }}>Suppléments</div>
     <div style={{ display: "grid", gridTemplateColumns: "repeat(4,1fr)", gap: 12 }}>
       {[
-        { nom: "Nouvel agent", prix: "750 €", detail: "par agent" },
+        { nom: "Nouvel agent", prix: "1 500 €", detail: "par agent" },
         { nom: "Formation équipe", prix: "300 €", detail: "1h30" },
         { nom: "Maintenance", prix: "150 €", detail: "/ mois / agent" },
-        { nom: "Reporting mensuel", prix: "200 €", detail: "/ mois" },
+        { nom: "Mise à jour IA", prix: "200 €", detail: "/ mois — agents toujours à jour" },
       ].map((s) => (
         <div key={s.nom} style={{ background: c.card, border: `1px solid ${c.border}`, borderRadius: 10, padding: 18 }}>
           <div style={{ fontSize: 11, color: c.textFaint, marginBottom: 6 }}>{s.nom}</div>
