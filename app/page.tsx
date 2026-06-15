@@ -100,7 +100,7 @@ export default function Dashboard() {
   return (
     <div style={{ ...tr, display: "flex", flexDirection: isMobile ? "column" : "row", height: "100vh", background: c.bg, color: c.text, overflow: "hidden", fontFamily: "DM Sans, sans-serif" }}>
 
-      {/* ── MOBILE TOP BAR ── */}
+      {/* MOBILE TOP BAR */}
       {isMobile && (
         <div style={{ ...tr, display: "flex", alignItems: "center", justifyContent: "space-between", padding: "12px 16px", background: c.sidebar, borderBottom: `1px solid ${c.border}`, flexShrink: 0 }}>
           <div>
@@ -113,7 +113,7 @@ export default function Dashboard() {
         </div>
       )}
 
-      {/* ── DESKTOP SIDEBAR ── */}
+      {/* DESKTOP SIDEBAR */}
       {!isMobile && (
         <aside style={{ ...tr, width: 200, background: c.sidebar, borderRight: `1px solid ${c.border}`, display: "flex", flexDirection: "column", flexShrink: 0 }}>
           <div style={{ padding: "18px 16px", borderBottom: `1px solid ${c.border}` }}>
@@ -133,7 +133,8 @@ export default function Dashboard() {
                 fontWeight: view === item.id ? 500 : 400,
               }}>{item.label}</button>
             ))}
-            <a href="/agent" style={{ ...tr, textAlign: "left", fontSize: 13, padding: "8px 12px", borderRadius: 6, background: "transparent", color: c.textMuted, borderLeft: "2px solid transparent", textDecoration: "none", display: "block", marginTop: 4 }}>Démo agent</a>
+            <a href="/agent" style={{ ...tr, textAlign: "left", fontSize: 13, padding: "8px 12px", borderRadius: 6, background: "transparent", color: c.textMuted, borderLeft: "2px solid transparent", textDecoration: "none", display: "block", marginTop: 4 }}>Démo Alex</a>
+            <a href="/agent/tom" style={{ ...tr, textAlign: "left", fontSize: 13, padding: "8px 12px", borderRadius: 6, background: "transparent", color: c.textMuted, borderLeft: "2px solid transparent", textDecoration: "none", display: "block", marginTop: 2 }}>Démo Tom</a>
           </nav>
           <div style={{ padding: "14px 16px", borderTop: `1px solid ${c.border}` }}>
             <button onClick={() => setDark(!dark)} style={{ ...tr, width: "100%", fontSize: 12, padding: "8px 12px", borderRadius: 6, background: c.hover, color: c.textSub, border: `1px solid ${c.border}`, cursor: "pointer", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
@@ -144,10 +145,10 @@ export default function Dashboard() {
         </aside>
       )}
 
-      {/* ── MAIN CONTENT ── */}
+      {/* MAIN CONTENT */}
       <main style={{ flex: 1, overflowY: "auto", padding: isMobile ? 16 : 28, paddingBottom: isMobile ? 80 : 28 }}>
 
-        {/* ── DASHBOARD ── */}
+        {/* DASHBOARD */}
         {view === "dashboard" && (
           <div>
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 20, flexWrap: "wrap", gap: 8 }}>
@@ -203,7 +204,7 @@ export default function Dashboard() {
           </div>
         )}
 
-        {/* ── AGENTS ── */}
+        {/* AGENTS */}
         {view === "agents" && (
           <div>
             <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 20, flexWrap: "wrap", gap: 8 }}>
@@ -231,7 +232,7 @@ export default function Dashboard() {
                       <div style={{ width: 7, height: 7, borderRadius: "50%", background: agent.status === "active" ? c.green : c.accent, flexShrink: 0 }} />
                       {agent.task}
                     </div>
-                    <button style={{ fontSize: 11, background: c.accentBg, color: c.accent, border: `1px solid ${c.accentBorder}`, padding: "4px 10px", borderRadius: 5, cursor: "pointer", fontWeight: 500, flexShrink: 0 }}>Parler</button>
+                    <a href={agent.name === "Alex" ? "/agent" : agent.name === "Tom" ? "/agent/tom" : "#"} style={{ fontSize: 11, background: c.accentBg, color: c.accent, border: `1px solid ${c.accentBorder}`, padding: "4px 10px", borderRadius: 5, cursor: "pointer", fontWeight: 500, flexShrink: 0, textDecoration: "none" }}>Parler</a>
                   </div>
                 </div>
               ))}
@@ -239,7 +240,7 @@ export default function Dashboard() {
           </div>
         )}
 
-        {/* ── TASKS ── */}
+        {/* TASKS */}
         {view === "tasks" && (
           <div>
             <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 20, flexWrap: "wrap", gap: 8 }}>
@@ -273,7 +274,7 @@ export default function Dashboard() {
           </div>
         )}
 
-        {/* ── ORG ── */}
+        {/* ORG */}
         {view === "org" && (
           <>
             <div>
@@ -321,7 +322,7 @@ export default function Dashboard() {
           </>
         )}
 
-        {/* ── PRICING ── */}
+        {/* PRICING */}
         {view === "pricing" && (
           <div>
             <div style={{ marginBottom: 24 }}>
@@ -371,7 +372,7 @@ export default function Dashboard() {
 
       </main>
 
-      {/* ── MOBILE BOTTOM NAV ── */}
+      {/* MOBILE BOTTOM NAV */}
       {isMobile && (
         <nav style={{ ...tr, position: "fixed", bottom: 0, left: 0, right: 0, background: c.sidebar, borderTop: `1px solid ${c.border}`, display: "flex", zIndex: 100 }}>
           {navItems.map((item) => (
@@ -382,7 +383,8 @@ export default function Dashboard() {
               borderTop: `2px solid ${view === item.id ? c.accent : "transparent"}`,
             }}>{item.label}</button>
           ))}
-          <a href="/agent" style={{ flex: 1, padding: "10px 4px", fontSize: 10, color: c.textMuted, textDecoration: "none", display: "flex", alignItems: "center", justifyContent: "center", borderTop: "2px solid transparent" }}>Démo</a>
+          <a href="/agent" style={{ flex: 1, padding: "10px 4px", fontSize: 10, color: c.textMuted, textDecoration: "none", display: "flex", alignItems: "center", justifyContent: "center", borderTop: "2px solid transparent" }}>Alex</a>
+          <a href="/agent/tom" style={{ flex: 1, padding: "10px 4px", fontSize: 10, color: c.textMuted, textDecoration: "none", display: "flex", alignItems: "center", justifyContent: "center", borderTop: "2px solid transparent" }}>Tom</a>
         </nav>
       )}
 
