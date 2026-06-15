@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server'
 export async function POST(req: Request) {
   try {
-    const { messages } = await req.json()
+    const { messages, system } = await req.json()
     const res = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
       headers: {
@@ -12,7 +12,7 @@ export async function POST(req: Request) {
       body: JSON.stringify({
         model: 'claude-haiku-4-5-20251001',
         max_tokens: 500,
-        system: 'Tu es Alex, un agent email IA. Reponds toujours en francais en 2-3 phrases max.',
+        system: system || 'Tu es Alex, un agent email IA. Reponds toujours en francais en 2-3 phrases max.',
         messages,
       }),
     })
@@ -24,4 +24,3 @@ export async function POST(req: Request) {
     return NextResponse.json({ reply: 'Erreur serveur: ' + e })
   }
 }
-// updated
