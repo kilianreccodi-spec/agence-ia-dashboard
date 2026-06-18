@@ -83,10 +83,7 @@ export default function TomPage() {
       const res = await fetch("/api/chat", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          messages: history.current,
-          system: "Tu es Tom, un agent IA de relance commerciale pour Optima Flow. Tu surveilles les leads inactifs et prépares des messages de relance personnalisés. Tu parles en français, de façon concise et professionnelle. Tu connais les leads suivants : Jean Dupont (13j sans contact), Marie Martin (9j), Thomas Dubois (11j), Sophie Renard (15j), Pierre Lambert (8j), Julie Bernard (14j). Tu as généré des brouillons de relance pour chacun ce matin.",
-        }),
+        body: JSON.stringify({ messages: history.current, agentId: "tom" }),
       });
       const data = await res.json();
       const reply = data.reply || "Je rencontre une difficulté. Réessayez.";

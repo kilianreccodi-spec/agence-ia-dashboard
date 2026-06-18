@@ -71,7 +71,7 @@ export default function AgentPage() {
       const res = await fetch("/api/chat", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ messages: history.current }),
+        body: JSON.stringify({ messages: history.current, agentId: "alex" }),
       });
       const data = await res.json();
       const reply = data.reply || "Je rencontre une difficulté. Réessayez.";
