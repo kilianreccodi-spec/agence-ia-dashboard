@@ -188,7 +188,8 @@ export default function TomPage() {
           <a href="/" style={{ fontSize: 18, color: c.textMuted, textDecoration: "none", marginRight: 4 }}>‹</a>
         )}
         {!isMobile && (
-          <div style={{ marginRight: 8 }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 12, marginRight: 8 }}>
+            <a href="/" style={{ ...tr, fontSize: 12, padding: "5px 10px", borderRadius: 6, background: c.hover, color: c.textMuted, border: `1px solid ${c.border}`, textDecoration: "none", flexShrink: 0 }}>← Retour</a>
             <div style={{ fontSize: 13, fontWeight: 600, color: c.text }}>◆ Optima Flow</div>
           </div>
         )}
