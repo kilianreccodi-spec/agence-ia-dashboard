@@ -3,12 +3,12 @@ import { useState, useEffect } from "react";
 import { supabase } from "../lib/supabase";
 
 const agents = [
-  { id: 1, name: "Alex", role: "Gestion email", dept: "Communication", tools: ["Gmail", "Outlook"], status: "active", task: "Traite 8 emails en attente" },
-  { id: 2, name: "Tom", role: "Relance inactifs", dept: "Commercial", tools: ["HubSpot", "Gmail"], status: "active", task: "Relance 12 leads dormants" },
-  { id: 3, name: "Lucas", role: "Veille concurrentielle", dept: "Stratégie", tools: ["Google", "LinkedIn", "Slack"], status: "active", task: "Scan hebdomadaire en cours" },
-  { id: 4, name: "Clara", role: "Suivi client post-vente", dept: "Relation client", tools: ["Gmail", "HubSpot", "Calendly"], status: "active", task: "Envoie suivi J+7 · 3 clients" },
-  { id: 5, name: "Romain", role: "Recrutement", dept: "RH", tools: ["Gmail", "Notion"], status: "pending", task: "Attend validation · 2 CVs" },
-  { id: 6, name: "Sarah", role: "Facturation automatique", dept: "Admin", tools: ["Gmail", "Notion", "Pennylane"], status: "active", task: "Facture #2026-089 générée" },
+  { id: 1, name: "Alex", role: "Gestion email", dept: "Communication", tools: ["Gmail", "Outlook"], status: "active", task: "Traite 8 emails en attente", chatUrl: "/agent" },
+  { id: 2, name: "Tom", role: "Relance inactifs", dept: "Commercial", tools: ["HubSpot", "Gmail"], status: "active", task: "Relance 12 leads dormants", chatUrl: "/agent/tom" },
+  { id: 3, name: "Lucas", role: "Veille concurrentielle", dept: "Stratégie", tools: ["Google", "LinkedIn", "Slack"], status: "active", task: "Scan hebdomadaire en cours", chatUrl: null },
+  { id: 4, name: "Clara", role: "Suivi client post-vente", dept: "Relation client", tools: ["Gmail", "HubSpot", "Calendly"], status: "active", task: "Envoie suivi J+7 · 3 clients", chatUrl: null },
+  { id: 5, name: "Romain", role: "Recrutement", dept: "RH", tools: ["Gmail", "Notion"], status: "pending", task: "Attend validation · 2 CVs", chatUrl: null },
+  { id: 6, name: "Sarah", role: "Facturation automatique", dept: "Admin", tools: ["Gmail", "Notion", "Pennylane"], status: "active", task: "Facture #2026-089 générée", chatUrl: null },
 ];
 
 const tasks = {
@@ -133,8 +133,13 @@ export default function Dashboard() {
                 fontWeight: view === item.id ? 500 : 400,
               }}>{item.label}</button>
             ))}
-            <a href="/agent" style={{ ...tr, textAlign: "left", fontSize: 13, padding: "8px 12px", borderRadius: 6, background: "transparent", color: c.textMuted, borderLeft: "2px solid transparent", textDecoration: "none", display: "block", marginTop: 4 }}>Démo Alex</a>
-            <a href="/agent/tom" style={{ ...tr, textAlign: "left", fontSize: 13, padding: "8px 12px", borderRadius: 6, background: "transparent", color: c.textMuted, borderLeft: "2px solid transparent", textDecoration: "none", display: "block", marginTop: 2 }}>Démo Tom</a>
+            <div style={{ fontSize: 9, color: c.textFaint, letterSpacing: "1px", textTransform: "uppercase", padding: "12px 8px 4px", marginTop: 4 }}>Agents disponibles</div>
+            <a href="/agent" style={{ ...tr, textAlign: "left", fontSize: 12, padding: "7px 12px", borderRadius: 6, background: "transparent", color: c.textMuted, borderLeft: `2px solid ${c.green}`, textDecoration: "none", display: "flex", alignItems: "center", gap: 6 }}>
+              <span style={{ width: 6, height: 6, borderRadius: "50%", background: c.green, flexShrink: 0, display: "inline-block" }} />Alex
+            </a>
+            <a href="/agent/tom" style={{ ...tr, textAlign: "left", fontSize: 12, padding: "7px 12px", borderRadius: 6, background: "transparent", color: c.textMuted, borderLeft: `2px solid ${c.green}`, textDecoration: "none", display: "flex", alignItems: "center", gap: 6, marginTop: 2 }}>
+              <span style={{ width: 6, height: 6, borderRadius: "50%", background: c.green, flexShrink: 0, display: "inline-block" }} />Tom
+            </a>
           </nav>
           <div style={{ padding: "14px 16px", borderTop: `1px solid ${c.border}` }}>
             <button onClick={() => setDark(!dark)} style={{ ...tr, width: "100%", fontSize: 12, padding: "8px 12px", borderRadius: 6, background: c.hover, color: c.textSub, border: `1px solid ${c.border}`, cursor: "pointer", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
@@ -232,7 +237,11 @@ export default function Dashboard() {
                       <div style={{ width: 7, height: 7, borderRadius: "50%", background: agent.status === "active" ? c.green : c.accent, flexShrink: 0 }} />
                       {agent.task}
                     </div>
-                    <a href={agent.name === "Alex" ? "/agent" : agent.name === "Tom" ? "/agent/tom" : "#"} style={{ fontSize: 11, background: c.accentBg, color: c.accent, border: `1px solid ${c.accentBorder}`, padding: "4px 10px", borderRadius: 5, cursor: "pointer", fontWeight: 500, flexShrink: 0, textDecoration: "none" }}>Parler</a>
+                    {agent.chatUrl ? (
+                      <a href={agent.chatUrl} style={{ fontSize: 11, background: c.accentBg, color: c.accent, border: `1px solid ${c.accentBorder}`, padding: "4px 10px", borderRadius: 5, cursor: "pointer", fontWeight: 500, flexShrink: 0, textDecoration: "none" }}>Parler →</a>
+                    ) : (
+                      <span style={{ fontSize: 10, color: c.textFaint, border: `1px solid ${c.border}`, padding: "4px 10px", borderRadius: 5, flexShrink: 0 }}>Bientôt</span>
+                    )}
                   </div>
                 </div>
               ))}
@@ -383,8 +392,8 @@ export default function Dashboard() {
               borderTop: `2px solid ${view === item.id ? c.accent : "transparent"}`,
             }}>{item.label}</button>
           ))}
-          <a href="/agent" style={{ flex: 1, padding: "10px 4px", fontSize: 10, color: c.textMuted, textDecoration: "none", display: "flex", alignItems: "center", justifyContent: "center", borderTop: "2px solid transparent" }}>Alex</a>
-          <a href="/agent/tom" style={{ flex: 1, padding: "10px 4px", fontSize: 10, color: c.textMuted, textDecoration: "none", display: "flex", alignItems: "center", justifyContent: "center", borderTop: "2px solid transparent" }}>Tom</a>
+          <a href="/agent" style={{ flex: 1, padding: "10px 4px", fontSize: 10, color: c.green, textDecoration: "none", display: "flex", alignItems: "center", justifyContent: "center", borderTop: `2px solid ${c.green}` }}>Alex</a>
+          <a href="/agent/tom" style={{ flex: 1, padding: "10px 4px", fontSize: 10, color: c.green, textDecoration: "none", display: "flex", alignItems: "center", justifyContent: "center", borderTop: `2px solid ${c.green}` }}>Tom</a>
         </nav>
       )}
 
