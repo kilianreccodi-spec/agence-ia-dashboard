@@ -9,6 +9,7 @@ const agents = [
   { id: 4, name: "Clara", role: "Suivi client post-vente", dept: "Relation client", tools: ["Gmail", "HubSpot", "Calendly"], status: "active", task: "Envoie suivi J+7 · 3 clients", chatUrl: null },
   { id: 5, name: "Romain", role: "Recrutement", dept: "RH", tools: ["Gmail", "Notion"], status: "pending", task: "Attend validation · 2 CVs", chatUrl: null },
   { id: 6, name: "Sarah", role: "Facturation automatique", dept: "Admin", tools: ["Gmail", "Notion", "Pennylane"], status: "active", task: "Facture #2026-089 générée", chatUrl: null },
+  { id: 7, name: "Livia", role: "Réceptionniste vocale", dept: "Relation client", tools: ["Téléphone", "Google Calendar"], status: "active", task: "En ligne · prend les RDV par téléphone", chatUrl: "/agent/livia" },
 ];
 
 const tasks = {
@@ -139,6 +140,9 @@ export default function Dashboard() {
             </a>
             <a href="/agent/tom" style={{ ...tr, textAlign: "left", fontSize: 12, padding: "7px 12px", borderRadius: 6, background: "transparent", color: c.textMuted, borderLeft: `2px solid ${c.green}`, textDecoration: "none", display: "flex", alignItems: "center", gap: 6, marginTop: 2 }}>
               <span style={{ width: 6, height: 6, borderRadius: "50%", background: c.green, flexShrink: 0, display: "inline-block" }} />Tom
+            </a>
+            <a href="/agent/livia" style={{ ...tr, textAlign: "left", fontSize: 12, padding: "7px 12px", borderRadius: 6, background: "transparent", color: c.textMuted, borderLeft: `2px solid ${c.green}`, textDecoration: "none", display: "flex", alignItems: "center", gap: 6, marginTop: 2 }}>
+              <span style={{ width: 6, height: 6, borderRadius: "50%", background: c.green, flexShrink: 0, display: "inline-block" }} />Livia
             </a>
           </nav>
           <div style={{ padding: "14px 16px", borderTop: `1px solid ${c.border}` }}>
@@ -289,7 +293,7 @@ export default function Dashboard() {
             <div>
               <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 24, flexWrap: "wrap", gap: 8 }}>
                 <h1 style={{ fontSize: isMobile ? 16 : 18, fontWeight: 600, color: c.text }}>Organigramme agentique</h1>
-                <div style={{ fontSize: 11, color: c.textMuted, background: c.card, border: `1px solid ${c.border}`, padding: "5px 12px", borderRadius: 5 }}>6 agents · 6 départements</div>
+                <div style={{ fontSize: 11, color: c.textMuted, background: c.card, border: `1px solid ${c.border}`, padding: "5px 12px", borderRadius: 5 }}>7 agents · 6 départements</div>
               </div>
               <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 20 }}>
                 <div style={{ background: c.cardAlt, border: `1px solid ${c.accentBorder}`, padding: "12px 24px", borderRadius: 8, textAlign: "center" }}>
@@ -302,7 +306,7 @@ export default function Dashboard() {
                     { name: "Commercial", agents: ["Tom · Relance inactifs"] },
                     { name: "Communication", agents: ["Alex · Gestion email"] },
                     { name: "Stratégie", agents: ["Lucas · Veille concurrentielle"] },
-                    { name: "Relation client", agents: ["Clara · Suivi post-vente"] },
+                    { name: "Relation client", agents: ["Clara · Suivi post-vente", "Livia · Réceptionniste vocale"] },
                     { name: "RH", agents: ["Romain · Recrutement"] },
                     { name: "Admin", agents: ["Sarah · Facturation"] },
                   ].map((dep) => (
@@ -311,7 +315,7 @@ export default function Dashboard() {
                         <div style={{ fontSize: 12, fontWeight: 600, color: c.textSub }}>{dep.name}</div>
                       </div>
                       {dep.agents.map((a) => (
-                        <div key={a} style={{ background: c.cardAlt, border: `1px solid ${c.border}`, borderRadius: 6, padding: "6px 10px", textAlign: "center" }}>
+                        <div key={a} style={{ background: c.cardAlt, border: `1px solid ${c.border}`, borderRadius: 6, padding: "6px 10px", textAlign: "center", marginBottom: 4 }}>
                           <div style={{ fontSize: 11, color: c.textMuted, fontWeight: 500 }}>{a}</div>
                         </div>
                       ))}
@@ -321,7 +325,7 @@ export default function Dashboard() {
               </div>
             </div>
             <div style={{ display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: isMobile ? 16 : 40, marginTop: 24, width: "100%" }}>
-              {([["6", "Agents déployés"], ["6", "Départements"], ["145 000 €", "Économies / an"]] as [string, string][]).map(([v, l]) => (
+              {([["7", "Agents déployés"], ["6", "Départements"], ["145 000 €", "Économies / an"]] as [string, string][]).map(([v, l]) => (
                 <div key={l} style={{ textAlign: "center" }}>
                   <div style={{ fontSize: isMobile ? 22 : 28, fontWeight: 700, color: c.accent }}>{v}</div>
                   <div style={{ fontSize: 9, color: c.textMuted, textTransform: "uppercase", letterSpacing: "0.8px", marginTop: 6, fontWeight: 500 }}>{l}</div>
